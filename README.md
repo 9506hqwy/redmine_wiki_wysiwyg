@@ -29,8 +29,6 @@ This plugin provides a WYSIWYG editor for wiki pages.
 ## Note
 
 * Move another tab to save page.
-* Not support Redmine 6.0.
-  * need to disable digest base versioning (see [#39111](https://www.redmine.org/issues/39111)).
 * Not support image declaration.
 * Not support auto-complete.
 * Now editor is not WYSIWYG yet.
@@ -43,6 +41,7 @@ This plugin provides a WYSIWYG editor for wiki pages.
   * 4.2
   * 5.0
   * 5.1
+  * 6.0
 * Database
   * SQLite
   * MySQL 5.7 or 8.0

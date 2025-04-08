@@ -9,7 +9,7 @@ export default defineConfig({
                 return `stylesheets/[name][extname]`;
             },
             chunkFileNames: (chunkInfo) => {
-                return 'javascripts/[name]-[hash].js';
+                return 'javascripts/[name]-[hash].digested.js';
             }
         }
     },
