@@ -77,3 +77,6 @@ test-results/
 
 # Ignore artifacts
 artifacts/
+
+# Ignore assets
+assets/

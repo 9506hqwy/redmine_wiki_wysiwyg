@@ -1,0 +1,16 @@
+<!-- Wiki の編集 -->
+<%
+   if controller &&
+      controller.class.name == 'WikiController' &&
+      controller.action_name == 'edit' &&
+      @project &&
+      @project.module_enabled?(:wiki_wysiwyg)
+%>
+
+<li>
+  <a class="tab-wysiwyg" href="#"><%= l(:label_wiki_wysiwyg) %></a>
+</li>
+<div id="wysiwyg_content_text" class="wiki hidden">
+<div>
+
+<% end %> <!-- if -->

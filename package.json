@@ -1,7 +1,16 @@
 {
-  "name": "template_redmine_plugin",
+  "name": "redmine_wiki_wysiwyg",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@milkdown/crepe": "^7.8.0"
+  },
   "devDependencies": {
     "@playwright/test": "^1.51.1",
-    "@types/node": "^22.13.10"
+    "@types/node": "^22.13.10",
+    "vite": "^6.2.0"
   }
 }

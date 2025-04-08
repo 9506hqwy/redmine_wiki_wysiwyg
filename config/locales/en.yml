@@ -1,2 +1,4 @@
 en:
-  # my_label: "My label"
+  label_wiki_wysiwyg: Editor
+  permission_manage_wiki_wysiwyg: Manage Wiki WYSIWYG
+  project_module_wiki_wysiwyg: Wiki WYSIWYG

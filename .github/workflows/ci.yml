@@ -14,14 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         db: [mysql57, mysql80, postgres, sqlite3]
-        version: ['3.4', '4.0', '4.1', '4.2', '5.0', '5.1', '6.0']
+        version: ['4.0', '4.1', '4.2', '5.0', '5.1']
         exclude:
           - db: mysql57
             version: "5.1"
-          - db: mysql57
-            version: "6.0"
-          - db: mysql80
-            version: "3.4"
           - db: mysql80
             version: "4.0"
           - db: mysql80
@@ -30,8 +26,6 @@ jobs:
             version: "4.2"
           - db: mysql80
             version: "5.0"
-          - db: postgres
-            version: "3.4"
 
     services:
       mysql57:

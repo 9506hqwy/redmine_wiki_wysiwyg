@@ -1,0 +1,11 @@
+<!-- Wiki の編集 -->
+<%
+   if controller &&
+      controller.class.name == 'WikiController' &&
+      controller.action_name == 'edit' &&
+      @project &&
+      @project.module_enabled?(:wiki_wysiwyg)
+%>
+  <%= stylesheet_link_tag('wiki_wysiwyg.css', plugin: :redmine_wiki_wysiwyg) %>
+  <%= javascript_include_tag('wiki_wysiwyg.js', plugin: :redmine_wiki_wysiwyg, type: :module) %>
+<% end %> <!-- if -->
