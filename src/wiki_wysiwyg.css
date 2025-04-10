@@ -1,0 +1,34 @@
+.milkdown {
+    --crepe-color-on-background: #1b1c1d;
+    --crepe-color-surface: #fafafa;
+    --crepe-color-surface-low: #f2f3fa;
+    --crepe-color-on-surface: #191c20;
+    --crepe-color-on-surface-variant: #43474e;
+    --crepe-color-outline: #73777f;
+    --crepe-color-primary: #37618e;
+    --crepe-color-secondary: #d7e3f8;
+    --crepe-color-hover: #eceef4;
+    --crepe-color-selected: #e1e2e8;
+
+    --crepe-shadow-1:
+      0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+
+    position: relative;
+
+    .ProseMirror {
+        padding: 10px 0px 0px 120px;
+
+        .codemirror-host {
+            border: 1px solid #e2e2e2;
+            border-radius: 3px;
+        }
+    }
+
+    .ProseMirror-focused {
+        outline: none;
+    }
+
+    .ProseMirror-selectednode {
+        outline: none;
+    }
+}

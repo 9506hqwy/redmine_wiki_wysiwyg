@@ -1,6 +1,7 @@
 import { Crepe } from "@milkdown/crepe";
 import "@milkdown/crepe/theme/common/style.css";
-import "@milkdown/crepe/theme/nord.css";
+import "./wiki_wysiwyg.css";
+
 
 document.addEventListener('DOMContentLoaded', function() {
   let wysiwygEditor = null;
@@ -56,11 +57,15 @@ document.addEventListener('DOMContentLoaded', function() {
     previewContent.classList.add('hidden');
     wysiwygContent.classList.remove('hidden');
 
+    wysiwygContent.innerHTML = '';
+
     wysiwygEditor = new Crepe({
        root: wysiwygContent,
        defaultValue: editContent.value,
        features: {
+          [Crepe.Feature.LinkTooltip]: false,
           [Crepe.Feature.ImageBlock]: false,
+          [Crepe.Feature.Placeholder]: false,
           [Crepe.Feature.Latex]: false
        }
     });

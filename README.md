@@ -1,6 +1,6 @@
 # Redmine Wiki Wysiwyg
 
-This plugin provides a WYSIWYG editor for wiki pages.
+This plugin provides a WYSIWYG-style editor for wiki pages.
 
 **Now this plugins is in early development phase.**
 
@@ -29,9 +29,13 @@ This plugin provides a WYSIWYG editor for wiki pages.
 ## Note
 
 * Move another tab to save page.
+* WYSIWYG is not completed. e.g. table, code block, list.
+* Move focus to previous line when press `ENTER` at table in IME mode using Firefox.
+  * [#1484](https://github.com/ProseMirror/prosemirror/issues/1484) ?
+* Not support Textile format.
 * Not support image declaration.
 * Not support auto-complete.
-* Now editor is not WYSIWYG yet.
+* Not support link.
 
 ## Tested Environment
 
