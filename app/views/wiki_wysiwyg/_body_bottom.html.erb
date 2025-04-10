@@ -4,7 +4,8 @@
       controller.class.name == 'WikiController' &&
       controller.action_name == 'edit' &&
       @project &&
-      @project.module_enabled?(:wiki_wysiwyg)
+      @project.module_enabled?(:wiki_wysiwyg) &&
+      Setting.text_formatting.match(/mark/)
 %>
 
 <li>
