@@ -24,7 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
     wysiwygContent.style.display = 'none';
   }
 
-  const submitButton = document.querySelector('input[name="commit"]');
+  const commit = document.querySelector('input[name="commit"]');
+  const wysiwygCommit = document.querySelector('input[name="wysiwyg-commit"]');
+  wysiwygCommit.classList.add("hidden");
+  commit.after(wysiwygCommit);
+
+  wysiwygCommit.addEventListener('click', function(e) {
+    e.preventDefault();
+    editContent.value = wysiwygEditor.getMarkdown();
+    commit.click();
+  });
 
   const disablewysiwygContent = () => {
     wysiwygTab.classList.remove('selected');
@@ -35,7 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
       wysiwygEditor = null;
     }
 
-    submitButton.disabled = false;
+    commit.classList.remove("hidden");
+    wysiwygCommit.classList.add("hidden");
   };
 
   const enablewysiwygContent = (e) => {
@@ -45,7 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    submitButton.disabled = true;
+    commit.classList.add("hidden");
+    wysiwygCommit.classList.remove("hidden");
 
     editTab.classList.remove('selected');
     previewTab.classList.remove('selected');
