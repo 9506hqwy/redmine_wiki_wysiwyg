@@ -11,6 +11,39 @@
 <li>
   <a class="tab-wysiwyg" href="#"><%= l(:label_wiki_wysiwyg) %></a>
 </li>
+<li class="tab-wysiwyg-elements">
+  <div class="jstElements">
+    <button class="jstb_strong" type="button"></button>
+    <button class="jstb_em" type="button"></button>
+    <button class="jstb_del" type="button"></button>
+    <button class="jstb_code" type="button"></button>
+    <span class="jstSpacer"></span>
+    <button class="jstb_h1" type="button"></button>
+    <button class="jstb_h2" type="button"></button>
+    <button class="jstb_h3" type="button"></button>
+    <span class="jstSpacer"></span>
+    <button class="jstb_ul" type="button"></button>
+    <button class="jstb_ol" type="button"></button>
+    <!--
+    <button class="jstb_tl" type="button"></button>
+    -->
+    <span class="jstSpacer"></span>
+    <button class="jstb_bq" type="button"></button>
+    <!--
+    <button class="jstb_unbq" type="button"></button>
+    -->
+    <button class="jstb_table" type="button"></button>
+    <button class="jstb_pre" type="button"></button>
+    <button class="jstb_precode" type="button"></button>
+    <!--
+    <span class="jstSpacer"></span>
+    <button class="jstb_link" type="button"></button>
+    <button class="jstb_img" type="button"></button>
+    -->
+  </div>
+</li>
+<ul class="tab-wysiwyg-elements-precode-menu ui-menu ui-widget ui-widget-content">
+</ul>
 <div id="wysiwyg_content_text" class="wiki wiki-preview hidden">
 <div>
 <%= submit_tag l(:button_save), id: 'wysiwyg-submit', name: 'wysiwyg-commit' %>

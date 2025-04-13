@@ -16,7 +16,7 @@
     position: relative;
 
     .ProseMirror {
-        padding: 10px 0px 0px 120px;
+        padding: 0px;
 
         .codemirror-host {
             border: 1px solid #e2e2e2;
@@ -31,4 +31,13 @@
     .ProseMirror-selectednode {
         outline: none;
     }
+}
+
+.tab-wysiwyg-elements-precode-menu {
+    position: absolute;
+    width: 150px;
+}
+
+.tab-wysiwyg-elements-precode-menu .ui-menu-item-wrapper:hover {
+    background: #759fcf;
 }
