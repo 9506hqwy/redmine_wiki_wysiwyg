@@ -1,5 +1,6 @@
 import { Crepe } from "@milkdown/crepe";
 import {
+  listItemSchema,
   createCodeBlockCommand,
   toggleEmphasisCommand,
   toggleInlineCodeCommand,
@@ -13,9 +14,34 @@ import {
   insertTableCommand,
   toggleStrikethroughCommand,
 } from "@milkdown/kit/preset/gfm";
-import { callCommand } from '@milkdown/utils';
+import { findWrapping } from '@milkdown/kit/prose/transform'
+import { $command, callCommand } from '@milkdown/utils';
 import "@milkdown/crepe/theme/common/style.css";
 import "./wiki_wysiwyg.css";
+
+
+const wrapInTaskListCommand = $command(
+  "WrapInTaskList",
+  (ctx) =>
+    () =>
+      (state, dispatch) => {
+        const tr = state.tr;
+
+        const { $from, $to } = tr.selection;
+        const range = $from.blockRange($to);
+
+        const wrapping = range && findWrapping(
+          range,
+          listItemSchema.type(ctx),
+          { checked: false });
+
+        tr.wrap(range, wrapping);
+
+        dispatch(tr.scrollIntoView());
+
+        return true;
+      },
+);
 
 function setupPreCodeMenu(editor) {
   const menu = document.querySelector('.tab-wysiwyg-elements-precode-menu');
@@ -91,7 +117,10 @@ function setupJsToolBar(editor) {
     editor.action(callCommand(wrapInOrderedListCommand.key));
   });
 
-  // TODO: jstb_tl
+  const tl = document.querySelector('.tab-wysiwyg-elements .jstb_tl');
+  tl.addEventListener('click', function() {
+    editor.action(callCommand(wrapInTaskListCommand.key));
+  });
 
   const bq = document.querySelector('.tab-wysiwyg-elements .jstb_bq');
   bq.addEventListener('click', function() {
@@ -208,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
           [Crepe.Feature.Latex]: false,
        }
     });
+    wysiwygEditor.editor.use(wrapInTaskListCommand);
 
     setupJsToolBar(wysiwygEditor.editor);
 
