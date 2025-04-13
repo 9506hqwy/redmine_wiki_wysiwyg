@@ -16,11 +16,15 @@
     position: relative;
 
     .ProseMirror {
-        padding: 0px;
+        padding: 0px 0px 0px 6px;
 
         .codemirror-host {
             border: 1px solid #e2e2e2;
             border-radius: 3px;
+        }
+
+        table {
+            width: auto;
         }
     }
 
@@ -40,4 +44,9 @@
 
 .tab-wysiwyg-elements-precode-menu .ui-menu-item-wrapper:hover {
     background: #759fcf;
+}
+
+#wysiwyg_content_text {
+    height: 500px;
+    overflow-y: auto;
 }
