@@ -20,6 +20,28 @@ import "@milkdown/crepe/theme/common/style.css";
 import "./wiki_wysiwyg.css";
 
 
+const unwrapInBlockquoteCommand = $command(
+  "UnwrapInBlockquote",
+  (ctx) =>
+    () =>
+      (state, dispatch) => {
+        const tr = state.tr;
+
+        const { $from, $to } = tr.selection;
+        const { depth } = $from;
+        if (depth < 2) {
+          return false;
+        }
+
+        const range = $from.blockRange($to);
+        tr.lift(range, depth - 2);
+
+        dispatch(tr.scrollIntoView());
+
+        return true;
+      },
+);
+
 const wrapInTaskListCommand = $command(
   "WrapInTaskList",
   (ctx) =>
@@ -127,7 +149,10 @@ function setupJsToolBar(editor) {
     editor.action(callCommand(wrapInBlockquoteCommand.key));
   });
 
-  // TODO: jstb_unbq
+  const unbq = document.querySelector('.tab-wysiwyg-elements .jstb_unbq');
+  unbq.addEventListener('click', function() {
+    editor.action(callCommand(unwrapInBlockquoteCommand.key));
+  });
 
   const table = document.querySelector('.tab-wysiwyg-elements .jstb_table');
   table.addEventListener('click', function() {
@@ -237,7 +262,9 @@ document.addEventListener('DOMContentLoaded', function() {
           [Crepe.Feature.Latex]: false,
        }
     });
-    wysiwygEditor.editor.use(wrapInTaskListCommand);
+    wysiwygEditor.editor
+      .use(unwrapInBlockquoteCommand)
+      .use(wrapInTaskListCommand);
 
     setupJsToolBar(wysiwygEditor.editor);
 
