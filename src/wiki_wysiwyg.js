@@ -14,11 +14,17 @@ import {
   insertTableCommand,
   toggleStrikethroughCommand,
 } from "@milkdown/kit/preset/gfm";
-import { findWrapping } from '@milkdown/kit/prose/transform'
+import { findWrapping } from '@milkdown/kit/prose/transform';
 import { $command, callCommand } from '@milkdown/utils';
+import {
+  innerLinkAttr,
+  innerLinkRule,
+  innerLinkMark,
+  innerLinkSchema,
+  toggleInnerLinkCommand,
+} from './plugin-inner-link';
 import "@milkdown/crepe/theme/common/style.css";
 import "./wiki_wysiwyg.css";
-
 
 const unwrapInBlockquoteCommand = $command(
   "UnwrapInBlockquote",
@@ -173,7 +179,10 @@ function setupJsToolBar(editor) {
     preCodeMenu.classList.remove('hidden');
   });
 
-  // TODO: jstb_link
+  const link = document.querySelector('.tab-wysiwyg-elements .jstb_link');
+  link.addEventListener('click', function() {
+    editor.action(callCommand(toggleInnerLinkCommand.key));
+  });
 
   // TODO: jstb_img
 }
@@ -264,7 +273,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     wysiwygEditor.editor
       .use(unwrapInBlockquoteCommand)
-      .use(wrapInTaskListCommand);
+      .use(wrapInTaskListCommand)
+      .use([innerLinkMark, innerLinkAttr, innerLinkRule, innerLinkSchema])
+      .use(toggleInnerLinkCommand);
 
     setupJsToolBar(wysiwygEditor.editor);
 
