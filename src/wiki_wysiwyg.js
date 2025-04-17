@@ -1,9 +1,11 @@
 import { Crepe } from "@milkdown/crepe";
 import {
+  linkAttr,
   listItemSchema,
   createCodeBlockCommand,
   toggleEmphasisCommand,
   toggleInlineCodeCommand,
+  toggleLinkCommand,
   toggleStrongCommand,
   wrapInBlockquoteCommand,
   wrapInBulletListCommand,
@@ -184,6 +186,11 @@ function setupJsToolBar(editor) {
     editor.action(callCommand(toggleInnerLinkCommand.key));
   });
 
+  const extlink = document.querySelector('.tab-wysiwyg-elements .jstb_extlink');
+  extlink.addEventListener('click', function() {
+    editor.action(callCommand(toggleLinkCommand.key, { href: '' }));
+  });
+
   // TODO: jstb_img
 }
 
@@ -272,6 +279,11 @@ document.addEventListener('DOMContentLoaded', function() {
        }
     });
     wysiwygEditor.editor
+      .config((ctx) => {
+        ctx.set(linkAttr.key, (node) => {
+          return { class: 'external' };
+        });
+      })
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
       .use([innerLinkMark, innerLinkAttr, innerLinkRule, innerLinkSchema])

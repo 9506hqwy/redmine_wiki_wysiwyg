@@ -50,3 +50,7 @@
     height: 500px;
     overflow-y: auto;
 }
+
+.jstb_extlink {
+    background-image: url(../../../images/external.png);
+}
