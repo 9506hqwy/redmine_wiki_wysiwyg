@@ -6,7 +6,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@milkdown/crepe": "^7.8.0"
+    "@milkdown/kit": "^7.8.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.1",

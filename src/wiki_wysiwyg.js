@@ -1,5 +1,7 @@
-import { Crepe } from "@milkdown/crepe";
+import { Editor, defaultValueCtx, rootCtx } from '@milkdown/kit/core'
+// preset
 import {
+  commonmark,
   linkAttr,
   listItemSchema,
   createCodeBlockCommand,
@@ -13,11 +15,22 @@ import {
   wrapInOrderedListCommand,
 } from "@milkdown/kit/preset/commonmark";
 import {
+  gfm,
   insertTableCommand,
   toggleStrikethroughCommand,
 } from "@milkdown/kit/preset/gfm";
+// component
+import { listItemBlockComponent, listItemBlockConfig, defaultListItemBlockConfig } from "@milkdown/kit/component/list-item-block";
+// plugin
+import { clipboard } from '@milkdown/kit/plugin/clipboard'
+import { history } from '@milkdown/kit/plugin/history'
+import { indent } from '@milkdown/kit/plugin/indent'
+import { listener, listenerCtx } from '@milkdown/kit/plugin/listener'
+// other
 import { findWrapping } from '@milkdown/kit/prose/transform';
+import { getMarkdown } from '@milkdown/kit/utils'
 import { $command, callCommand } from '@milkdown/utils';
+// local
 import {
   innerLinkAttr,
   innerLinkRule,
@@ -25,7 +38,6 @@ import {
   innerLinkSchema,
   toggleInnerLinkCommand,
 } from './plugin-inner-link';
-import "@milkdown/crepe/theme/common/style.css";
 import "./wiki_wysiwyg.css";
 
 const unwrapInBlockquoteCommand = $command(
@@ -72,34 +84,6 @@ const wrapInTaskListCommand = $command(
         return true;
       },
 );
-
-function setupPreCodeMenu(editor) {
-  const menu = document.querySelector('.tab-wysiwyg-elements-precode-menu');
-  menu.classList.add('hidden');
-
-  for (const lang of window.userHlLanguages) {
-    const text = document.createElement('div');
-    text.classList.add('ui-menu-item-wrapper');
-    text.innerHTML = lang;
-
-    const item = document.createElement('li');
-    item.classList.add('ui-menu-item')
-    item.addEventListener('mousedown', function() {
-      const l = lang;
-      editor.action(callCommand(createCodeBlockCommand.key, l));
-    });
-    item.appendChild(text);
-
-    menu.appendChild(item);
-  }
-
-  document.querySelector('body').appendChild(menu);
-  document.addEventListener('mousedown', function() {
-    menu.classList.add('hidden');
-  })
-
-  return menu;
-}
 
 function setupJsToolBar(editor) {
   const strong = document.querySelector('.tab-wysiwyg-elements .jstb_strong');
@@ -172,14 +156,7 @@ function setupJsToolBar(editor) {
     editor.action(callCommand(createCodeBlockCommand.key));
   });
 
-  const preCodeMenu = setupPreCodeMenu(editor);
-  const precode = document.querySelector('.tab-wysiwyg-elements .jstb_precode');
-  precode.addEventListener('click', function(e) {
-    const rect = e.target.getBoundingClientRect();
-    preCodeMenu.style.left = `${rect.x + window.scrollX}px`;
-    preCodeMenu.style.top = `${rect.bottom + window.scrollY}px`;
-    preCodeMenu.classList.remove('hidden');
-  });
+  // TODO: jstb_precode
 
   const link = document.querySelector('.tab-wysiwyg-elements .jstb_link');
   link.addEventListener('click', function() {
@@ -227,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   wysiwygCommit.addEventListener('click', function(e) {
     e.preventDefault();
-    editContent.value = wysiwygEditor.getMarkdown();
+    editContent.value = wysiwygEditor.action(getMarkdown());
     commit.click();
   });
 
@@ -236,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
     jstWysiwyg.classList.add('hidden');
     wysiwygContent.classList.add('hidden');
     if (wysiwygEditor != null) {
-      editContent.value = wysiwygEditor.getMarkdown();
+      editContent.value = wysiwygEditor.action(getMarkdown());
       wysiwygEditor.destroy();
       wysiwygEditor = null;
     }
@@ -268,35 +245,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     wysiwygContent.innerHTML = '';
 
-    wysiwygEditor = new Crepe({
-       root: wysiwygContent,
-       defaultValue: editContent.value,
-       features: {
-          [Crepe.Feature.BlockEdit]: false,
-          [Crepe.Feature.Placeholder]: false,
-          [Crepe.Feature.Toolbar]: false,
-          [Crepe.Feature.Latex]: false,
-       }
-    });
-    wysiwygEditor.editor
+    wysiwygEditor = Editor.make()
       .config((ctx) => {
+        ctx.set(rootCtx, wysiwygContent);
+
+        ctx.set(defaultValueCtx, editContent.value);
+
         ctx.set(linkAttr.key, (node) => {
           return { class: 'external' };
         });
+
+        const listener = ctx.get(listenerCtx);
+        listener.updated(function() {
+          // Use jQuery change method because dispatchEvent does not work expectedly.
+          $('#content_text').change();
+        });
+
+        ctx.set(listItemBlockConfig.key, {
+          renderLabel: ({ label, listType, checked, readonly }) => {
+            if (checked == null) {
+              return '';
+            }
+             return defaultListItemBlockConfig.renderLabel({label, listType, checked, readonly});
+          },
+        });
       })
+      .use(commonmark)
+      .use(clipboard)
+      .use(gfm)
+      .use(history)
+      .use(indent)
+      .use(listener)
+      .use(listItemBlockComponent)
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
       .use([innerLinkMark, innerLinkAttr, innerLinkRule, innerLinkSchema])
       .use(toggleInnerLinkCommand);
 
-    setupJsToolBar(wysiwygEditor.editor);
-
-    wysiwygEditor.on((listener) => {
-      listener.updated(function() {
-        // Use jQuery change method because dispatchEvent does not work expectedly.
-        $('#content_text').change();
-      });
-    });
+    setupJsToolBar(wysiwygEditor);
 
     wysiwygEditor.create();
   };

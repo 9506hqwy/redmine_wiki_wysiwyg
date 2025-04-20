@@ -28,12 +28,12 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 
 ## Note
 
-* WYSIWYG is not completed. e.g. table, code block, list.
-* Move focus to previous line when press `ENTER` at table in IME mode using Firefox.
-  * [#1484](https://github.com/ProseMirror/prosemirror/issues/1484) ?
 * Not support Textile format.
 * Not support image declaration.
 * Not support auto-complete.
+* Not support external link.
+* Not support table operation.
+* Not support code block.
 
 ## Tested Environment
 
