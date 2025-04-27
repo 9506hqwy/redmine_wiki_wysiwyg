@@ -32,10 +32,9 @@ import { getMarkdown } from '@milkdown/kit/utils'
 import { $command, callCommand } from '@milkdown/utils';
 // local
 import {
-  innerLinkAttr,
-  innerLinkRule,
   innerLinkMark,
   innerLinkSchema,
+  innerLinkView,
   toggleInnerLinkCommand,
 } from './plugin-inner-link';
 import "./wiki_wysiwyg.css";
@@ -279,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(listItemBlockComponent)
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
-      .use([innerLinkMark, innerLinkAttr, innerLinkRule, innerLinkSchema])
+      .use([innerLinkMark, innerLinkSchema, innerLinkView])
       .use(toggleInnerLinkCommand);
 
     setupJsToolBar(wysiwygEditor);

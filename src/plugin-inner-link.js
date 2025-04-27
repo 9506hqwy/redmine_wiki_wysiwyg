@@ -1,15 +1,16 @@
-import { editorViewCtx } from '@milkdown/core';
-import { markRule } from '@milkdown/prose';
 import { toggleMark } from '@milkdown/prose/commands';
-import { $command, $inputRule, $markAttr, $markSchema, $remark } from '@milkdown/utils';
+import { $command, $markSchema, $remark, $view } from '@milkdown/utils';
 import { visit } from 'unist-util-visit';
+
+// [[name|display]]
+const innerLinkFormat = '\\[\\[([^ /\\|\\]]+)(\\|([^)\\]]+))?\\]\\]';
 
 // Extended markdown syntax for redmine inner link format.
 // Parse markdown text to markdown AST.
 export const innerLinkMark = $remark(
   'remarkInnerLink',
   () => () => (ast) => {
-    const find = /\[\[([^/\]]+)\]\]/g;
+    const find = new RegExp(innerLinkFormat, "g");
     visit(ast, 'text', (node, index, parent) => {
       if (!node.value || typeof node.value !== 'string') {
         return;
@@ -30,7 +31,15 @@ export const innerLinkMark = $remark(
           });
         }
 
-        result.push({ type: 'innerLink', href: match[1] });
+        const name = match[1];
+        const diplay = match[3] ? match[3] : name;
+        const children = [{ type: 'text', value:diplay }];
+
+        result.push({
+          type: 'innerLink',
+          href: name,
+          children: children,
+        });
 
         start = position + match[0].length;
         match = find.exec(node.value);
@@ -46,36 +55,29 @@ export const innerLinkMark = $remark(
   }
 );
 
-// Attribute for innerLink AST.
-export const innerLinkAttr = $markAttr('innerLink')
-
 // Schema for innerLink AST.
 // https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/transformer/src/utility/types.ts#L57
 export const innerLinkSchema = $markSchema('innerLink', (ctx) => ({
-  priority: 100,
   attrs: {
     href: {},
   },
-  /*
+  // Set high priority than linkSchema.
   parseDOM: [
     {
+      priority: 100,
       tag: 'a:not([href*="/"])',
       getAttrs: (dom) => ({
         href: dom.getAttribute('href'),
       }),
     },
   ],
-  */
-  // Render WYSIWYG.
-  // markdown text --(parseMarkdown)--> AST --(toDOM)--> DOM.
-  toDOM: (mark) => ['a', { ...ctx.get(innerLinkAttr.key)(mark), ...mark.attrs }],
   // Use innerLinkMark remark.
   parseMarkdown: {
     match: (node) => node.type === 'innerLink',
     runner: (state, node, markType) => {
       const { href } = node;
       state.openMark(markType, { href });
-      state.addText(href);
+      state.next(node.children)
       state.closeMark(markType);
     },
   },
@@ -83,34 +85,83 @@ export const innerLinkSchema = $markSchema('innerLink', (ctx) => ({
   // AST --(toMarkdown)--> markdown text.
   toMarkdown: {
     match: (mark) => mark.type.name === 'innerLink',
-    runner: (state, mark) => {
-      state.withMark(mark, 'text', `[[${mark.attrs.href}]]`);
+    runner: (state, mark, node) => {
+      const md = mark.attrs.href != node.text ? `[[${mark.attrs.href}|${node.text}]]` : `[[${mark.attrs.href}]]`;
+      state.withMark(mark, 'text', md);
+      // Not execute toMarkdown of node.
+      return true;
     },
   },
 }))
 
-// Render innerLink AST during typing keyboard.
-export const innerLinkRule = $inputRule(
+// View innerLink AST.
+export const innerLinkView = $view(
+  innerLinkSchema.mark,
   (ctx) => {
-    return markRule(/\[\[([^/\]]+)\]\]/, innerLinkSchema.type(ctx), {
-      getAttr: (match) => {
-        return {
-          href: match[1],
-        }
-      },
-  })}
-);
+    return (mark, view, inline) => {
+      const link = document.createElement('a');
+      link.href = mark.attrs.href;
 
-// Toggle text <--> innerLink AST.
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const { dispatch, state } = view;
+        const { tr, selection } = state;
+        const { $from } = selection;
+        const node = $from.parent.child($from.index());
+        const curMark = node.marks.find(({ type }) => type === innerLinkSchema.type(ctx));
+        const href = window.prompt('Wiki:', curMark.attrs.href);
+        if (href && href != curMark.attrs.href) {
+          const from = $from.pos - $from.textOffset;
+          const to = from + node.nodeSize;
+          const markType = innerLinkSchema.type(ctx);
+          tr
+            .removeMark(from, to, curMark)
+            .addMark(from, to, markType.create({ href }))
+            .scrollIntoView();
+          dispatch(tr);
+        }
+      });
+
+      return {
+        dom: link,
+      }
+    };
+  },
+)
+
+// Insert or toggle text <--> innerLink AST.
 export const toggleInnerLinkCommand = $command(
   'InnerLink',
   (ctx) =>
-    () => {
-      const { state } = ctx.get(editorViewCtx);
-      const { selection } = state;
-      const { $from, $to } = selection;
-      const node = $from.node();
-      const href = node.textContent.slice($from.parentOffset, $to.parentOffset);
-      return toggleMark(innerLinkSchema.type(ctx), { href })
-  },
+    () =>
+      (state, dispatch) => {
+        const { selection, tr } = state;
+        const { $from, $to } = selection;
+
+        if (selection.empty) {
+          // Insert new innerLink.
+          const href = window.prompt('Wiki:');
+          if (href) {
+            const markType = innerLinkSchema.type(ctx);
+            const from = $from.pos;
+            const to = from + href.length;
+            tr
+              .insertText(href)
+              .addMark(from, to, markType.create({ href }));
+
+            if (dispatch) {
+              dispatch(tr.scrollIntoView());
+              return true;
+            }
+          }
+
+          return false;
+        }
+
+        // Toggle text and innerLink.
+        const node = $from.node();
+        const href = node.textContent.slice($from.parentOffset, $to.parentOffset);
+        return toggleMark(innerLinkSchema.type(ctx), { href })(state, dispatch);
+    },
 );
