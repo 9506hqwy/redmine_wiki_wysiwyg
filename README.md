@@ -29,8 +29,11 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 ## Note
 
 * Not support Textile format.
+* Table
+  * Value of empty cell is `<br />`.
+  * Not support newline in cell.
+  * Not support to display cell with align.
 * Not support auto-complete.
-* Not support table operation.
 * Not support code block.
 
 ## Tested Environment

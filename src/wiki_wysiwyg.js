@@ -3,6 +3,7 @@ import { Editor, defaultValueCtx, rootCtx } from '@milkdown/kit/core'
 import {
   commonmark,
   listItemSchema,
+  hardbreakFilterNodes,
   createCodeBlockCommand,
   insertImageCommand,
   toggleEmphasisCommand,
@@ -38,6 +39,7 @@ import {
 } from './plugin-inner-link';
 import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-link';
 import { imageView } from './plugin-image';
+import { tableCellView, tableHeaderView, setupTableEditor } from './plugin-table';
 import "./wiki_wysiwyg.css";
 
 var wysiwygEditor = null;
@@ -269,6 +271,9 @@ document.addEventListener('DOMContentLoaded', function() {
              return defaultListItemBlockConfig.renderLabel({label, listType, checked, readonly});
           },
         });
+
+        // Not support break in table.
+        //ctx.set(hardbreakFilterNodes.key, ['code_block']);
       })
       .use(commonmark)
       .use(clipboard)
@@ -283,9 +288,11 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(toggleInnerLinkCommand)
       .use(externalLinkView)
       .use(toggleExternalLinkCommand)
-      .use(imageView);
+      .use(imageView)
+      .use([tableCellView, tableHeaderView]);
 
     wysiwygEditor.create();
+    setupTableEditor(wysiwygEditor);
   };
 
   setupJsToolBar();
