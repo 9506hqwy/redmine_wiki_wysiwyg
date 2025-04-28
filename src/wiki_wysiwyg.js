@@ -40,6 +40,8 @@ import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-l
 import { imageView } from './plugin-image';
 import "./wiki_wysiwyg.css";
 
+var wysiwygEditor = null;
+
 const unwrapInBlockquoteCommand = $command(
   "UnwrapInBlockquote",
   (ctx) =>
@@ -85,99 +87,97 @@ const wrapInTaskListCommand = $command(
       },
 );
 
-function setupJsToolBar(editor) {
+function setupJsToolBar() {
   const strong = document.querySelector('.tab-wysiwyg-elements .jstb_strong');
   strong.addEventListener('click', function() {
-    editor.action(callCommand(toggleStrongCommand.key));
+    wysiwygEditor.action(callCommand(toggleStrongCommand.key));
   });
 
   const em = document.querySelector('.tab-wysiwyg-elements .jstb_em');
   em.addEventListener('click', function() {
-    editor.action(callCommand(toggleEmphasisCommand.key));
+    wysiwygEditor.action(callCommand(toggleEmphasisCommand.key));
   });
 
   const del = document.querySelector('.tab-wysiwyg-elements .jstb_del');
   del.addEventListener('click', function() {
-    editor.action(callCommand(toggleStrikethroughCommand.key));
+    wysiwygEditor.action(callCommand(toggleStrikethroughCommand.key));
   });
 
   const code = document.querySelector('.tab-wysiwyg-elements .jstb_code');
   code.addEventListener('click', function() {
-    editor.action(callCommand(toggleInlineCodeCommand.key));
+    wysiwygEditor.action(callCommand(toggleInlineCodeCommand.key));
   });
 
   const h1 = document.querySelector('.tab-wysiwyg-elements .jstb_h1');
   h1.addEventListener('click', function() {
-    editor.action(callCommand(wrapInHeadingCommand.key, 1));
+    wysiwygEditor.action(callCommand(wrapInHeadingCommand.key, 1));
   });
 
   const h2 = document.querySelector('.tab-wysiwyg-elements .jstb_h2');
   h2.addEventListener('click', function() {
-    editor.action(callCommand(wrapInHeadingCommand.key, 2));
+    wysiwygEditor.action(callCommand(wrapInHeadingCommand.key, 2));
   });
 
   const h3 = document.querySelector('.tab-wysiwyg-elements .jstb_h3');
   h3.addEventListener('click', function() {
-    editor.action(callCommand(wrapInHeadingCommand.key, 3));
+    wysiwygEditor.action(callCommand(wrapInHeadingCommand.key, 3));
   });
 
   const ul = document.querySelector('.tab-wysiwyg-elements .jstb_ul');
   ul.addEventListener('click', function() {
-    editor.action(callCommand(wrapInBulletListCommand.key));
+    wysiwygEditor.action(callCommand(wrapInBulletListCommand.key));
   });
 
   const ol = document.querySelector('.tab-wysiwyg-elements .jstb_ol');
   ol.addEventListener('click', function() {
-    editor.action(callCommand(wrapInOrderedListCommand.key));
+    wysiwygEditor.action(callCommand(wrapInOrderedListCommand.key));
   });
 
   const tl = document.querySelector('.tab-wysiwyg-elements .jstb_tl');
   tl.addEventListener('click', function() {
-    editor.action(callCommand(wrapInTaskListCommand.key));
+    wysiwygEditor.action(callCommand(wrapInTaskListCommand.key));
   });
 
   const bq = document.querySelector('.tab-wysiwyg-elements .jstb_bq');
   bq.addEventListener('click', function() {
-    editor.action(callCommand(wrapInBlockquoteCommand.key));
+    wysiwygEditor.action(callCommand(wrapInBlockquoteCommand.key));
   });
 
   const unbq = document.querySelector('.tab-wysiwyg-elements .jstb_unbq');
   unbq.addEventListener('click', function() {
-    editor.action(callCommand(unwrapInBlockquoteCommand.key));
+    wysiwygEditor.action(callCommand(unwrapInBlockquoteCommand.key));
   });
 
   const table = document.querySelector('.tab-wysiwyg-elements .jstb_table');
   table.addEventListener('click', function() {
-    editor.action(callCommand(insertTableCommand.key));
+    wysiwygEditor.action(callCommand(insertTableCommand.key));
   });
 
   const pre = document.querySelector('.tab-wysiwyg-elements .jstb_pre');
   pre.addEventListener('click', function() {
-    editor.action(callCommand(createCodeBlockCommand.key));
+    wysiwygEditor.action(callCommand(createCodeBlockCommand.key));
   });
 
   // TODO: jstb_precode
 
   const link = document.querySelector('.tab-wysiwyg-elements .jstb_link');
   link.addEventListener('click', function() {
-    editor.action(callCommand(toggleInnerLinkCommand.key));
+    wysiwygEditor.action(callCommand(toggleInnerLinkCommand.key));
   });
 
   const extlink = document.querySelector('.tab-wysiwyg-elements .jstb_extlink');
   extlink.addEventListener('click', function() {
-    editor.action(callCommand(toggleExternalLinkCommand.key));
+    wysiwygEditor.action(callCommand(toggleExternalLinkCommand.key));
   });
 
   const img = document.querySelector('.tab-wysiwyg-elements .jstb_img');
   img.addEventListener('click', function() {
     const uri = window.prompt('Image:');
-    editor.action(callCommand(insertImageCommand.key, { src: uri, alt: uri }));
+    wysiwygEditor.action(callCommand(insertImageCommand.key, { src: uri, alt: uri }));
   });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  let wysiwygEditor = null;
-
   const editTab = document.querySelector('div.jstTabs .tab-edit');
   const previewTab = document.querySelector('div.jstTabs .tab-preview');
   const wysiwygTab = document.querySelector('.tab-wysiwyg');
@@ -285,10 +285,10 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(toggleExternalLinkCommand)
       .use(imageView);
 
-    setupJsToolBar(wysiwygEditor);
-
     wysiwygEditor.create();
   };
+
+  setupJsToolBar();
 
   editTab && editTab.parentNode.addEventListener('click', disablewysiwygContent);
   previewTab && previewTab.parentNode.addEventListener('click', disablewysiwygContent);
