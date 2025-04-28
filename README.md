@@ -31,7 +31,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * Not support Textile format.
 * Not support image declaration.
 * Not support auto-complete.
-* Not support external link.
 * Not support table operation.
 * Not support code block.
 

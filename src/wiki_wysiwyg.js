@@ -2,12 +2,10 @@ import { Editor, defaultValueCtx, rootCtx } from '@milkdown/kit/core'
 // preset
 import {
   commonmark,
-  linkAttr,
   listItemSchema,
   createCodeBlockCommand,
   toggleEmphasisCommand,
   toggleInlineCodeCommand,
-  toggleLinkCommand,
   toggleStrongCommand,
   wrapInBlockquoteCommand,
   wrapInBulletListCommand,
@@ -37,6 +35,7 @@ import {
   innerLinkView,
   toggleInnerLinkCommand,
 } from './plugin-inner-link';
+import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-link';
 import "./wiki_wysiwyg.css";
 
 const unwrapInBlockquoteCommand = $command(
@@ -164,7 +163,7 @@ function setupJsToolBar(editor) {
 
   const extlink = document.querySelector('.tab-wysiwyg-elements .jstb_extlink');
   extlink.addEventListener('click', function() {
-    editor.action(callCommand(toggleLinkCommand.key, { href: '' }));
+    editor.action(callCommand(toggleExternalLinkCommand.key));
   });
 
   // TODO: jstb_img
@@ -250,10 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         ctx.set(defaultValueCtx, editContent.value);
 
-        ctx.set(linkAttr.key, (node) => {
-          return { class: 'external' };
-        });
-
         const listener = ctx.get(listenerCtx);
         listener.updated(function() {
           // Use jQuery change method because dispatchEvent does not work expectedly.
@@ -279,7 +274,9 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
       .use([innerLinkMark, innerLinkSchema, innerLinkView])
-      .use(toggleInnerLinkCommand);
+      .use(toggleInnerLinkCommand)
+      .use(externalLinkView)
+      .use(toggleExternalLinkCommand);
 
     setupJsToolBar(wysiwygEditor);
 
