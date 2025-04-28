@@ -4,6 +4,7 @@ import {
   commonmark,
   listItemSchema,
   createCodeBlockCommand,
+  insertImageCommand,
   toggleEmphasisCommand,
   toggleInlineCodeCommand,
   toggleStrongCommand,
@@ -36,6 +37,7 @@ import {
   toggleInnerLinkCommand,
 } from './plugin-inner-link';
 import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-link';
+import { imageView } from './plugin-image';
 import "./wiki_wysiwyg.css";
 
 const unwrapInBlockquoteCommand = $command(
@@ -166,7 +168,11 @@ function setupJsToolBar(editor) {
     editor.action(callCommand(toggleExternalLinkCommand.key));
   });
 
-  // TODO: jstb_img
+  const img = document.querySelector('.tab-wysiwyg-elements .jstb_img');
+  img.addEventListener('click', function() {
+    const uri = window.prompt('Image:');
+    editor.action(callCommand(insertImageCommand.key, { src: uri, alt: uri }));
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -276,7 +282,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .use([innerLinkMark, innerLinkSchema, innerLinkView])
       .use(toggleInnerLinkCommand)
       .use(externalLinkView)
-      .use(toggleExternalLinkCommand);
+      .use(toggleExternalLinkCommand)
+      .use(imageView);
 
     setupJsToolBar(wysiwygEditor);
 
