@@ -2,12 +2,10 @@ import { Editor, defaultValueCtx, rootCtx } from '@milkdown/kit/core'
 // preset
 import {
   commonmark,
-  listItemSchema,
   hardbreakFilterNodes,
   createCodeBlockCommand,
   insertImageCommand,
   toggleEmphasisCommand,
-  toggleInlineCodeCommand,
   toggleStrongCommand,
   wrapInBlockquoteCommand,
   wrapInBulletListCommand,
@@ -32,10 +30,14 @@ import { minimalSetup } from "codemirror";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { languages } from "@codemirror/language-data";
 import { keymap } from '@codemirror/view'
-import { findWrapping } from '@milkdown/kit/prose/transform';
 import { getMarkdown } from '@milkdown/kit/utils'
-import { $command, callCommand } from '@milkdown/utils';
 // local
+import {
+  callCommandAndFocusEditor,
+  toggleInlineCodeExCommand,
+  unwrapInBlockquoteCommand,
+  wrapInTaskListCommand,
+} from './plugin-commands';
 import {
   innerLinkMark,
   innerLinkSchema,
@@ -50,141 +52,98 @@ import "./wiki_wysiwyg.css";
 
 var wysiwygEditor = null;
 
-const unwrapInBlockquoteCommand = $command(
-  "UnwrapInBlockquote",
-  (ctx) =>
-    () =>
-      (state, dispatch) => {
-        const tr = state.tr;
-
-        const { $from, $to } = tr.selection;
-        const { depth } = $from;
-        if (depth < 2) {
-          return false;
-        }
-
-        const range = $from.blockRange($to);
-        tr.lift(range, depth - 2);
-
-        dispatch(tr.scrollIntoView());
-
-        return true;
-      },
-);
-
-const wrapInTaskListCommand = $command(
-  "WrapInTaskList",
-  (ctx) =>
-    () =>
-      (state, dispatch) => {
-        const tr = state.tr;
-
-        const { $from, $to } = tr.selection;
-        const range = $from.blockRange($to);
-
-        const wrapping = range && findWrapping(
-          range,
-          listItemSchema.type(ctx),
-          { checked: false });
-
-        tr.wrap(range, wrapping);
-
-        dispatch(tr.scrollIntoView());
-
-        return true;
-      },
-);
-
 function setupJsToolBar() {
   const strong = document.querySelector('.tab-wysiwyg-elements .jstb_strong');
   strong.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(toggleStrongCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(toggleStrongCommand.key));
   });
 
   const em = document.querySelector('.tab-wysiwyg-elements .jstb_em');
   em.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(toggleEmphasisCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(toggleEmphasisCommand.key));
   });
 
   const del = document.querySelector('.tab-wysiwyg-elements .jstb_del');
   del.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(toggleStrikethroughCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(toggleStrikethroughCommand.key));
   });
 
   const code = document.querySelector('.tab-wysiwyg-elements .jstb_code');
   code.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(toggleInlineCodeCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(toggleInlineCodeExCommand.key));
   });
 
   const h1 = document.querySelector('.tab-wysiwyg-elements .jstb_h1');
   h1.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInHeadingCommand.key, 1));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInHeadingCommand.key, 1));
   });
 
   const h2 = document.querySelector('.tab-wysiwyg-elements .jstb_h2');
   h2.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInHeadingCommand.key, 2));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInHeadingCommand.key, 2));
   });
 
   const h3 = document.querySelector('.tab-wysiwyg-elements .jstb_h3');
   h3.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInHeadingCommand.key, 3));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInHeadingCommand.key, 3));
   });
 
   const ul = document.querySelector('.tab-wysiwyg-elements .jstb_ul');
   ul.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInBulletListCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInBulletListCommand.key));
   });
 
   const ol = document.querySelector('.tab-wysiwyg-elements .jstb_ol');
   ol.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInOrderedListCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInOrderedListCommand.key));
   });
 
   const tl = document.querySelector('.tab-wysiwyg-elements .jstb_tl');
   tl.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInTaskListCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInTaskListCommand.key));
   });
 
   const bq = document.querySelector('.tab-wysiwyg-elements .jstb_bq');
   bq.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(wrapInBlockquoteCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(wrapInBlockquoteCommand.key));
   });
 
   const unbq = document.querySelector('.tab-wysiwyg-elements .jstb_unbq');
   unbq.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(unwrapInBlockquoteCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(unwrapInBlockquoteCommand.key));
   });
 
   const table = document.querySelector('.tab-wysiwyg-elements .jstb_table');
   table.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(insertTableCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(insertTableCommand.key, {}));
   });
 
   const pre = document.querySelector('.tab-wysiwyg-elements .jstb_pre');
   pre.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(createCodeBlockCommand.key));
+    // TODO: recover focus to current position.
+    wysiwygEditor.action(callCommandAndFocusEditor(createCodeBlockCommand.key, ''));
   });
 
   const precode = document.querySelector('.tab-wysiwyg-elements .jstb_precode');
   precode.addEventListener('click', function(e) {
+    // TODO: Add undo support when existing block is changed to code block.
     setupShowPrecodeMenu(e, wysiwygEditor);
   });
 
   const link = document.querySelector('.tab-wysiwyg-elements .jstb_link');
   link.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(toggleInnerLinkCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(toggleInnerLinkCommand.key));
   });
 
   const extlink = document.querySelector('.tab-wysiwyg-elements .jstb_extlink');
   extlink.addEventListener('click', function() {
-    wysiwygEditor.action(callCommand(toggleExternalLinkCommand.key));
+    wysiwygEditor.action(callCommandAndFocusEditor(toggleExternalLinkCommand.key));
   });
 
   const img = document.querySelector('.tab-wysiwyg-elements .jstb_img');
   img.addEventListener('click', function() {
     const uri = window.prompt('Image:');
-    wysiwygEditor.action(callCommand(insertImageCommand.key, { src: uri, alt: uri }));
+    wysiwygEditor.action(callCommandAndFocusEditor(insertImageCommand.key, { src: uri, alt: uri }));
   });
 }
 
@@ -318,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(indent)
       .use(listener)
       .use(listItemBlockComponent)
+      .use(toggleInlineCodeExCommand)
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
       .use([innerLinkMark, innerLinkSchema, innerLinkView])

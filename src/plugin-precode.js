@@ -1,5 +1,5 @@
 import { createCodeBlockCommand } from "@milkdown/kit/preset/commonmark";
-import { callCommand } from '@milkdown/utils';
+import { callCommandAndFocusEditor } from './plugin-commands';
 
 function createPrecodeMenu(editor) {
   const menu = document.createElement('ul');
@@ -8,7 +8,7 @@ function createPrecodeMenu(editor) {
     const item = document.createElement('li');
     item.addEventListener('click', function() {
       const l = lang;
-      editor.action(callCommand(createCodeBlockCommand.key, l));
+      editor.action(callCommandAndFocusEditor(createCodeBlockCommand.key, l));
     });
 
     const text = document.createElement('div');
