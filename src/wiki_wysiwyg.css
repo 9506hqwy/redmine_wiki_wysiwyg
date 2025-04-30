@@ -52,6 +52,79 @@
             }
         }
     }
+
+    milkdown-code-block {
+        display: flex;
+        flex-direction: column;
+
+        .tools {
+            z-index: 1;
+            position: absolute;
+            align-self: end;
+            display: flex;
+            flex-direction: row-reverse;
+            margin: 1em 1em 1em 1.6em;
+            opacity: 0;
+
+            .language-picker {
+                z-index: 2;
+                display: none;
+
+                &.show {
+                    display: block;
+                }
+
+                .list-wrapper {
+                    background: #fafafa;
+
+                    .language-list {
+                        margin: 0px;
+                        padding: 0px;
+
+                        .language-list-item {
+                            display: flex;
+                            cursor: pointer;
+                            padding: 2px 4px;
+
+                            &:hover {
+                                background-color: #759fcf;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .clear-icon {
+                display: none;
+            }
+
+            .expand-icon {
+                display: none;
+            }
+
+            .search-icon {
+                display: none;
+            }
+        }
+
+        &:hover .tools {
+            opacity: 1;
+        }
+
+        .codemirror-host {
+            border: none !important;
+
+            .cm-editor {
+                outline: none !important;
+                margin: 1em 1em 1em 1.6em;
+                padding: 8px;
+                background-color: #fafafa;
+                border: 1px solid #e2e2e2;
+                border-radius: 3px;
+                overflow-y: hidden;
+            }
+        }
+    }
 }
 
 #wysiwyg_content_text {
@@ -122,6 +195,32 @@
 
         &.add-row-after {
             transform: translateX(-50%) translateY(50%);
+        }
+    }
+}
+
+.wysiwyg-precode-menu {
+    position: absolute;
+    width: 150px;
+    background-color: white;
+    border: 1px solid #cccccc;
+    border-radius: 2px;
+
+    ul {
+        margin: 0px;
+        padding: 0px;
+        list-style-type: none;
+
+        li {
+            cursor: pointer;
+
+            div {
+                padding: 4px 8px;
+            }
+        }
+
+        li:hover {
+            background-color: #759fcf;
         }
     }
 }

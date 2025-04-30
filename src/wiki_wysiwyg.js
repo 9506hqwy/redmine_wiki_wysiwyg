@@ -14,6 +14,7 @@ import {
   wrapInHeadingCommand,
   wrapInOrderedListCommand,
 } from "@milkdown/kit/preset/commonmark";
+import { codeBlockComponent, codeBlockConfig } from "@milkdown/kit/component/code-block";
 import {
   gfm,
   insertTableCommand,
@@ -27,6 +28,10 @@ import { history } from '@milkdown/kit/plugin/history'
 import { indent } from '@milkdown/kit/plugin/indent'
 import { listener, listenerCtx } from '@milkdown/kit/plugin/listener'
 // other
+import { minimalSetup } from "codemirror";
+import { defaultKeymap, indentWithTab } from "@codemirror/commands";
+import { languages } from "@codemirror/language-data";
+import { keymap } from '@codemirror/view'
 import { findWrapping } from '@milkdown/kit/prose/transform';
 import { getMarkdown } from '@milkdown/kit/utils'
 import { $command, callCommand } from '@milkdown/utils';
@@ -39,6 +44,7 @@ import {
 } from './plugin-inner-link';
 import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-link';
 import { imageView } from './plugin-image';
+import { setupShowPrecodeMenu } from './plugin-precode';
 import { tableCellView, tableHeaderView, setupTableEditor } from './plugin-table';
 import "./wiki_wysiwyg.css";
 
@@ -160,7 +166,10 @@ function setupJsToolBar() {
     wysiwygEditor.action(callCommand(createCodeBlockCommand.key));
   });
 
-  // TODO: jstb_precode
+  const precode = document.querySelector('.tab-wysiwyg-elements .jstb_precode');
+  precode.addEventListener('click', function(e) {
+    setupShowPrecodeMenu(e, wysiwygEditor);
+  });
 
   const link = document.querySelector('.tab-wysiwyg-elements .jstb_link');
   link.addEventListener('click', function() {
@@ -274,7 +283,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Not support break in table.
         //ctx.set(hardbreakFilterNodes.key, ['code_block']);
+
+        ctx.update(codeBlockConfig.key, (defaultConfig) => {
+          const supportedCodeLangs = window.userHlLanguages.map((l) => l.toLowerCase());
+          const supportedLanguages = [];
+          for (const lang of languages) {
+            if (supportedCodeLangs.includes(lang.name.toLocaleLowerCase())) {
+              supportedLanguages.push(lang);
+              continue;
+            }
+
+            const alias = lang.alias.map((l) => l.toLowerCase());
+            if (alias.find((a) => supportedCodeLangs.includes(a))) {
+              supportedLanguages.push(lang);
+              continue;
+            }
+          }
+
+          return {
+            ...defaultConfig,
+            extensions: [
+              keymap.of(defaultKeymap.concat(indentWithTab)),
+              minimalSetup,
+            ],
+            languages: supportedLanguages,
+          };
+        });
       })
+      .use(codeBlockComponent)
       .use(commonmark)
       .use(clipboard)
       .use(gfm)

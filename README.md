@@ -34,7 +34,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
   * Not support newline in cell.
   * Not support to display cell with align.
 * Not support auto-complete.
-* Not support code block.
 
 ## Tested Environment
 

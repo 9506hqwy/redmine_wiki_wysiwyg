@@ -6,7 +6,9 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@milkdown/kit": "^7.8.0"
+    "@codemirror/language-data": "^6.5.1",
+    "@milkdown/kit": "^7.8.0",
+    "codemirror": "^6.0.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.1",
