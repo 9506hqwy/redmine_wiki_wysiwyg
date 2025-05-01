@@ -1,10 +1,40 @@
 import { createCodeBlockCommand } from "@milkdown/kit/preset/commonmark";
 import { callCommandAndFocusEditor } from './plugin-commands';
 
+var defaultLanguages = [
+  "c",
+  "cpp",
+  "csharp",
+  "css",
+  "diff",
+  "go",
+  "groovy",
+  "html",
+  "java",
+  "javascript",
+  "objc",
+  "perl",
+  "php",
+  "python",
+  "r",
+  "ruby",
+  "sass",
+  "scala",
+  "shell",
+  "sql",
+  "swift",
+  "xml",
+  "yaml"
+];
+
+export function supportLanguages() {
+  return window.userHlLanguages || defaultLanguages;
+}
+
 function createPrecodeMenu(editor) {
   const menu = document.createElement('ul');
 
-  for (const lang of window.userHlLanguages) {
+  for (const lang of supportLanguages()) {
     const item = document.createElement('li');
     item.addEventListener('click', function() {
       const l = lang;

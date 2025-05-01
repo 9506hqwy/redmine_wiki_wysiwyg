@@ -2,11 +2,27 @@
 
 This plugin provides a WYSIWYG-style editor for wiki pages.
 
-**Now this plugins is in early development phase.**
+**Now this plugins is in development phase yet.**
 
 ## Features
 
 - Edit wiki using rich text editor powered by [milkdown](https://milkdown.dev/).
+
+## Key Bindings
+
+- `CTRL+b`: Bold.
+- `CTRL+i`: Italic.
+- `CTRL+e`: Inline code.
+- `CTRL+ALT+1`: Text.
+- `CTRL+ALT+1`: Heading level 1.
+- `CTRL+ALT+2`: Heading level 2.
+- `CTRL+ALT+3`: Heading level 3.
+- `CTRL+ALT+c`: Code block.
+- `CTRL+ALT+x`: Strike through.
+- In code Block
+  - `CTRL+Enter`: Exit code block.
+- In table Block
+  - `CTRL+Enter`: Exit table block.
 
 ## Installatin
 
@@ -29,6 +45,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 ## Note
 
 * Not support Textile format.
+* Not support underline text decoration.
 * Table
   * Value of empty cell is `<br />`.
   * Not support newline in cell.

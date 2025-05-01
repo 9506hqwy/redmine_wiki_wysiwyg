@@ -2,7 +2,7 @@
 <%
    if controller &&
       controller.class.name == 'WikiController' &&
-      controller.action_name == 'edit' &&
+      (controller.action_name == 'edit' || (controller.action_name == 'show' && @page.new_record?)) &&
       @project &&
       @project.module_enabled?(:wiki_wysiwyg) &&
       Setting.text_formatting.match(/mark/)

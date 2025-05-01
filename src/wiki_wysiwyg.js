@@ -1,23 +1,8 @@
 import { Editor, defaultValueCtx, rootCtx } from '@milkdown/kit/core'
 // preset
-import {
-  commonmark,
-  hardbreakFilterNodes,
-  createCodeBlockCommand,
-  insertImageCommand,
-  toggleEmphasisCommand,
-  toggleStrongCommand,
-  wrapInBlockquoteCommand,
-  wrapInBulletListCommand,
-  wrapInHeadingCommand,
-  wrapInOrderedListCommand,
-} from "@milkdown/kit/preset/commonmark";
+import { commonmark, hardbreakFilterNodes } from "@milkdown/kit/preset/commonmark";
 import { codeBlockComponent, codeBlockConfig } from "@milkdown/kit/component/code-block";
-import {
-  gfm,
-  insertTableCommand,
-  toggleStrikethroughCommand,
-} from "@milkdown/kit/preset/gfm";
+import { gfm } from "@milkdown/kit/preset/gfm";
 // component
 import { listItemBlockComponent, listItemBlockConfig, defaultListItemBlockConfig } from "@milkdown/kit/component/list-item-block";
 // plugin
@@ -33,7 +18,6 @@ import { keymap } from '@codemirror/view'
 import { getMarkdown } from '@milkdown/kit/utils'
 // local
 import {
-  callCommandAndFocusEditor,
   toggleInlineCodeExCommand,
   unwrapInBlockquoteCommand,
   wrapInTaskListCommand,
@@ -46,106 +30,12 @@ import {
 } from './plugin-inner-link';
 import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-link';
 import { imageView } from './plugin-image';
-import { setupShowPrecodeMenu } from './plugin-precode';
-import { tableCellView, tableHeaderView, setupTableEditor } from './plugin-table';
+import { setupJsToolBar } from './plugin-jstoolbar';
+import { supportLanguages } from './plugin-precode';
+import { tableCellView, tableHeaderView } from './plugin-table';
 import "./wiki_wysiwyg.css";
 
 var wysiwygEditor = null;
-
-function setupJsToolBar() {
-  const strong = document.querySelector('.tab-wysiwyg-elements .jstb_strong');
-  strong.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(toggleStrongCommand.key));
-  });
-
-  const em = document.querySelector('.tab-wysiwyg-elements .jstb_em');
-  em.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(toggleEmphasisCommand.key));
-  });
-
-  const del = document.querySelector('.tab-wysiwyg-elements .jstb_del');
-  del.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(toggleStrikethroughCommand.key));
-  });
-
-  const code = document.querySelector('.tab-wysiwyg-elements .jstb_code');
-  code.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(toggleInlineCodeExCommand.key));
-  });
-
-  const h1 = document.querySelector('.tab-wysiwyg-elements .jstb_h1');
-  h1.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInHeadingCommand.key, 1));
-  });
-
-  const h2 = document.querySelector('.tab-wysiwyg-elements .jstb_h2');
-  h2.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInHeadingCommand.key, 2));
-  });
-
-  const h3 = document.querySelector('.tab-wysiwyg-elements .jstb_h3');
-  h3.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInHeadingCommand.key, 3));
-  });
-
-  const ul = document.querySelector('.tab-wysiwyg-elements .jstb_ul');
-  ul.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInBulletListCommand.key));
-  });
-
-  const ol = document.querySelector('.tab-wysiwyg-elements .jstb_ol');
-  ol.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInOrderedListCommand.key));
-  });
-
-  const tl = document.querySelector('.tab-wysiwyg-elements .jstb_tl');
-  tl.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInTaskListCommand.key));
-  });
-
-  const bq = document.querySelector('.tab-wysiwyg-elements .jstb_bq');
-  bq.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(wrapInBlockquoteCommand.key));
-  });
-
-  const unbq = document.querySelector('.tab-wysiwyg-elements .jstb_unbq');
-  unbq.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(unwrapInBlockquoteCommand.key));
-  });
-
-  const table = document.querySelector('.tab-wysiwyg-elements .jstb_table');
-  table.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(insertTableCommand.key, {}));
-  });
-
-  const pre = document.querySelector('.tab-wysiwyg-elements .jstb_pre');
-  pre.addEventListener('click', function() {
-    // TODO: recover focus to current position.
-    wysiwygEditor.action(callCommandAndFocusEditor(createCodeBlockCommand.key, ''));
-  });
-
-  const precode = document.querySelector('.tab-wysiwyg-elements .jstb_precode');
-  precode.addEventListener('click', function(e) {
-    // TODO: Add undo support when existing block is changed to code block.
-    setupShowPrecodeMenu(e, wysiwygEditor);
-  });
-
-  const link = document.querySelector('.tab-wysiwyg-elements .jstb_link');
-  link.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(toggleInnerLinkCommand.key));
-  });
-
-  const extlink = document.querySelector('.tab-wysiwyg-elements .jstb_extlink');
-  extlink.addEventListener('click', function() {
-    wysiwygEditor.action(callCommandAndFocusEditor(toggleExternalLinkCommand.key));
-  });
-
-  const img = document.querySelector('.tab-wysiwyg-elements .jstb_img');
-  img.addEventListener('click', function() {
-    const uri = window.prompt('Image:');
-    wysiwygEditor.action(callCommandAndFocusEditor(insertImageCommand.key, { src: uri, alt: uri }));
-  });
-}
 
 document.addEventListener('DOMContentLoaded', function() {
   const editTab = document.querySelector('div.jstTabs .tab-edit');
@@ -158,9 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   const jst = document.querySelector('div.jstTabs .tab-elements .jstElements');
-  const jstWysiwyg = document.querySelector('.tab-wysiwyg-elements .jstElements');
-  jstWysiwyg.classList.add('hidden');
-  jst.parentNode.after(jstWysiwyg.parentNode);
+  let jstWysiwyg = null;
 
   const editContent = document.querySelector('#content_text');
   const previewContent = document.querySelector('#preview_content_text');
@@ -173,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const commit = document.querySelector('input[name="commit"]');
   const wysiwygCommit = document.querySelector('input[name="wysiwyg-commit"]');
-  wysiwygCommit.classList.add("hidden");
+  wysiwygCommit.hidden = true;
   commit.after(wysiwygCommit);
 
   wysiwygCommit.addEventListener('click', function(e) {
@@ -184,7 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const disablewysiwygContent = () => {
     wysiwygTab.classList.remove('selected');
-    jstWysiwyg.classList.add('hidden');
+
+    if (jstWysiwyg != null) {
+      jstWysiwyg.remove();
+      jstWysiwyg = null;
+    }
+
     wysiwygContent.classList.add('hidden');
     if (wysiwygEditor != null) {
       editContent.value = wysiwygEditor.action(getMarkdown());
@@ -192,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
       wysiwygEditor = null;
     }
 
-    commit.classList.remove("hidden");
-    wysiwygCommit.classList.add("hidden");
+    commit.hidden = false;
+    wysiwygCommit.hidden = true;
   };
 
   const enablewysiwygContent = (e) => {
@@ -203,15 +96,14 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    commit.classList.add("hidden");
-    wysiwygCommit.classList.remove("hidden");
+    commit.hidden = true;
+    wysiwygCommit.hidden = false;
 
     editTab.classList.remove('selected');
     previewTab.classList.remove('selected');
     wysiwygTab.classList.add('selected');
 
     jst.classList.add('hidden');
-    jstWysiwyg.classList.remove('hidden');
 
     editContent.classList.add('hidden');
     previewContent.classList.add('hidden');
@@ -244,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         //ctx.set(hardbreakFilterNodes.key, ['code_block']);
 
         ctx.update(codeBlockConfig.key, (defaultConfig) => {
-          const supportedCodeLangs = window.userHlLanguages.map((l) => l.toLowerCase());
+          const supportedCodeLangs = supportLanguages().map((l) => l.toLowerCase());
           const supportedLanguages = [];
           for (const lang of languages) {
             if (supportedCodeLangs.includes(lang.name.toLocaleLowerCase())) {
@@ -288,10 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .use([tableCellView, tableHeaderView]);
 
     wysiwygEditor.create();
-    setupTableEditor(wysiwygEditor);
+    jstWysiwyg = setupJsToolBar(wysiwygEditor);
   };
-
-  setupJsToolBar();
 
   editTab && editTab.parentNode.addEventListener('click', disablewysiwygContent);
   previewTab && previewTab.parentNode.addEventListener('click', disablewysiwygContent);
