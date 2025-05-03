@@ -1,4 +1,4 @@
-import { Editor, defaultValueCtx, rootCtx } from '@milkdown/kit/core'
+import { Editor, defaultValueCtx, remarkStringifyOptionsCtx, rootCtx } from '@milkdown/kit/core'
 // preset
 import { commonmark, hardbreakFilterNodes } from "@milkdown/kit/preset/commonmark";
 import { codeBlockComponent, codeBlockConfig } from "@milkdown/kit/component/code-block";
@@ -23,6 +23,7 @@ import {
   wrapInTaskListCommand,
 } from './plugin-commands';
 import {
+  innerLinkHandler,
   innerLinkMark,
   innerLinkSchema,
   innerLinkView,
@@ -134,6 +135,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Not support break in table.
         //ctx.set(hardbreakFilterNodes.key, ['code_block']);
+
+        const options = ctx.get(remarkStringifyOptionsCtx);
+        options.handlers['innerLink'] = innerLinkHandler;
 
         ctx.update(codeBlockConfig.key, (defaultConfig) => {
           const supportedCodeLangs = supportLanguages().map((l) => l.toLowerCase());

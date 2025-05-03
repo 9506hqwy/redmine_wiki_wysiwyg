@@ -5,6 +5,30 @@ import { visit } from 'unist-util-visit';
 // [[name|display]]
 const innerLinkFormat = '\\[\\[([^ /\\|\\]]+)(\\|([^)\\]]+))?\\]\\]';
 
+// Extended toMarkdown method  for redmine inner link format.
+export const innerLinkHandler = (node, _, state, info) => {
+  const exit = state.enter('innerLink');
+  const tracker = state.createTracker(info);
+
+  let value = tracker.move('[[');
+
+  value += tracker.move(state.safe(node.href, info));
+
+  if (node.href != node.title) {
+    value += tracker.move('|');
+    value += tracker.move(state.containerPhrasing(node, {
+      before: value,
+      after: ']]',
+      ...tracker.current()
+    }));
+  }
+
+  value += tracker.move(']]');
+
+  exit();
+  return value;
+}
+
 // Extended markdown syntax for redmine inner link format.
 // Parse markdown text to markdown AST.
 export const innerLinkMark = $remark(
@@ -86,10 +110,10 @@ export const innerLinkSchema = $markSchema('innerLink', (ctx) => ({
   toMarkdown: {
     match: (mark) => mark.type.name === 'innerLink',
     runner: (state, mark, node) => {
-      const md = mark.attrs.href != node.text ? `[[${mark.attrs.href}|${node.text}]]` : `[[${mark.attrs.href}]]`;
-      state.withMark(mark, 'text', md);
-      // Not execute toMarkdown of node.
-      return true;
+      state.withMark(mark, 'innerLink', undefined, {
+        href: mark.attrs.href,
+        title: node.textContent,
+      });
     },
   },
 }))
