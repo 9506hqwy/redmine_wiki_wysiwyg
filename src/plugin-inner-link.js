@@ -106,21 +106,18 @@ export const innerLinkView = $view(
         e.preventDefault();
 
         const { dispatch, state } = view;
-        const { tr, selection } = state;
+        const { selection } = state;
         const { $from } = selection;
         const node = $from.parent.child($from.index());
         const curMark = node.marks.find(({ type }) => type === innerLinkSchema.type(ctx));
-        const href = window.prompt('Wiki:', curMark.attrs.href);
-        if (href && href != curMark.attrs.href) {
-          const from = $from.pos - $from.textOffset;
-          const to = from + node.nodeSize;
-          const markType = innerLinkSchema.type(ctx);
-          tr
-            .removeMark(from, to, curMark)
-            .addMark(from, to, markType.create({ href }))
-            .scrollIntoView();
-          dispatch(tr);
-        }
+        const title = node.textContent
+
+        const dialog = setupDialog(e => updateInnerLink(e, ctx, state, dispatch, node, curMark), d => {
+          document.getElementById('wysisyg-inner-link-wiki').value = curMark.attrs.href;
+          document.getElementById('wysisyg-inner-link-title').value = title;
+          document.getElementById('wysisyg-inner-link-title').disabled = true;
+        });
+        dialog.showModal();
       });
 
       return {
@@ -136,32 +133,203 @@ export const toggleInnerLinkCommand = $command(
   (ctx) =>
     () =>
       (state, dispatch) => {
-        const { selection, tr } = state;
-        const { $from, $to } = selection;
-
+        const { selection } = state;
         if (selection.empty) {
           // Insert new innerLink.
-          const href = window.prompt('Wiki:');
-          if (href) {
-            const markType = innerLinkSchema.type(ctx);
-            const from = $from.pos;
-            const to = from + href.length;
-            tr
-              .insertText(href)
-              .addMark(from, to, markType.create({ href }));
-
-            if (dispatch) {
-              dispatch(tr.scrollIntoView());
-              return true;
-            }
-          }
-
-          return false;
+          const dialog = setupDialog(e => insertInnerLink(e, ctx, state, dispatch));
+          dialog.showModal();
+          return true;
         }
 
         // Toggle text and innerLink.
+        const { $from, $to } = selection;
         const node = $from.node();
         const href = node.textContent.slice($from.parentOffset, $to.parentOffset);
         return toggleMark(innerLinkSchema.type(ctx), { href })(state, dispatch);
     },
 );
+
+function createDialog(submitFunc) {
+  // wiki
+  const wikiLabel = document.createElement('span');
+  wikiLabel.classList.add('label');
+  wikiLabel.for = 'wysisyg-inner-link-wiki';
+  wikiLabel.innerText = 'Wiki'
+
+  const wikiInput = document.createElement('input');
+  wikiInput.classList.add('input');
+  wikiInput.placeholder = 'wiki name';
+  wikiInput.setAttribute('list', 'wysisyg-inner-link-wiki-data');
+  wikiInput.id = 'wysisyg-inner-link-wiki';
+  setupAutoComplete(wikiInput);
+
+  const wikiData = document.createElement('datalist');
+  wikiData.id = 'wysisyg-inner-link-wiki-data';
+
+  const wikiBox = document.createElement('div');
+  wikiBox.classList.add('box');
+  wikiBox.append(wikiLabel);
+  wikiBox.append(wikiInput);
+  wikiBox.append(wikiData);
+
+  // title
+  const titleLabel = document.createElement('span');
+  titleLabel.classList.add('label');
+  titleLabel.for = 'wysisyg-inner-link-title'
+  titleLabel.innerText = 'Title'
+
+  const titleInput = document.createElement('input');
+  titleInput.classList.add('input');
+  titleInput.placeholder = 'display text (optional)';
+  titleInput.id = 'wysisyg-inner-link-title';
+
+  const titleBox = document.createElement('div');
+  titleBox.classList.add('box');
+  titleBox.append(titleLabel);
+  titleBox.append(titleInput);
+
+  // button
+  const okButton = document.createElement('button');
+  okButton.type = 'submit';
+  okButton.value = 'submit';
+  okButton.innerText = 'Ok';
+  okButton.addEventListener('click', submitFunc);
+
+  const cancelButton = document.createElement('button');
+  cancelButton.type = 'submit';
+  cancelButton.value = 'cancel';
+  cancelButton.innerText = 'Cancel';
+
+  const opBox = document.createElement('div');
+  opBox.classList.add('box');
+  opBox.appendChild(cancelButton);
+  opBox.appendChild(okButton);
+
+  // form
+  const form = document.createElement('form');
+  form.method = 'dialog';
+  form.autocomplete = 'off';
+  form.appendChild(wikiBox);
+  form.appendChild(titleBox);
+  form.appendChild(opBox);
+
+  // dialog
+  const dialog = document.createElement('dialog');
+  dialog.classList.add('wysisyg-inner-link-dialog');
+  dialog.appendChild(form);
+  dialog.addEventListener('close', function() {
+    dialog.remove();
+  });
+
+  return dialog;
+}
+
+function setupDialog(submitFunc, setupFunc = null) {
+  const dialog = createDialog(submitFunc);
+  document.querySelector('body').appendChild(dialog);
+
+  if (setupFunc) {
+    setupFunc(dialog);
+  }
+
+  return dialog;
+}
+
+function insertInnerLink(e, ctx, state, dispatch) {
+  e.stopPropagation();
+
+  const wiki = document.getElementById('wysisyg-inner-link-wiki');
+  const wikiName = wiki.value;
+  if (!wikiName) {
+    return false;
+  }
+
+  const title = document.getElementById('wysisyg-inner-link-title');
+  const titleText = title.value ? title.value : wikiName;
+
+  const { selection, tr } = state;
+  const { $from } = selection;
+
+  const markType = innerLinkSchema.type(ctx);
+  const from = $from.pos;
+  const to = from + titleText.length;
+  tr
+    .insertText(titleText)
+    .addMark(from, to, markType.create({ href: wikiName }));
+
+  if (dispatch) {
+    dispatch(tr.scrollIntoView());
+  }
+}
+
+function updateInnerLink(e, ctx, state, dispatch, node, mark) {
+  e.stopPropagation();
+
+  const wiki = document.getElementById('wysisyg-inner-link-wiki');
+  const wikiName = wiki.value;
+  if (!wikiName) {
+    return false;
+  }
+
+  const { tr, selection } = state;
+  const { $from } = selection;
+  const from = $from.pos - $from.textOffset;
+  const to = from + node.nodeSize;
+  const markType = innerLinkSchema.type(ctx);
+  tr
+    .removeMark(from, to, mark)
+    .addMark(from, to, markType.create({ href: wikiName }))
+    .scrollIntoView();
+  dispatch(tr);
+}
+
+function setupAutoComplete(element) {
+  const baseUrl = rm.AutoComplete.dataSources['wiki_pages'];
+  let timer = null;
+
+  element.addEventListener('keyup', function(e) {
+    if (e.keyCode >= 37 && e.keyCode <= 40) {
+      return;
+    }
+
+    if (timer) {
+      window.clearTimeout(timer);
+    }
+
+    timer = window.setTimeout(completeList, 300, e, baseUrl);
+  });
+}
+
+function completeList(e, baseUrl) {
+  const q = e.target.value;
+  if (q) {
+    const option = {
+      method: 'GET',
+      cache: 'no-cache',
+    };
+    fetch(`${baseUrl}${q}`, option).then(onReceiveList);
+  } else {
+    clearWikiInput();
+  }
+}
+
+function onReceiveList(response) {
+  if (response.ok) {
+    response.json().then(onComplete);
+  }
+}
+
+function onComplete(data) {
+  const list = clearWikiInput();
+  for (const wiki of data) {
+    const option = document.createElement('option');
+    option.value = wiki.label;
+    list.appendChild(option);
+  }
+}
+
+function clearWikiInput() {
+  const list = document.querySelector('#wysisyg-inner-link-wiki-data');
+  list.innerText = '';
+  return list;
+}

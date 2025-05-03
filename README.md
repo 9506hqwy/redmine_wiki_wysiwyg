@@ -13,15 +13,15 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 - `CTRL+b`: Bold.
 - `CTRL+i`: Italic.
 - `CTRL+e`: Inline code.
-- `CTRL+ALT+1`: Text.
+- `CTRL+ALT+0`: Text.
 - `CTRL+ALT+1`: Heading level 1.
 - `CTRL+ALT+2`: Heading level 2.
 - `CTRL+ALT+3`: Heading level 3.
 - `CTRL+ALT+c`: Code block.
 - `CTRL+ALT+x`: Strike through.
-- In code Block
+- In code block
   - `CTRL+Enter`: Exit code block.
-- In table Block
+- In table block
   - `CTRL+Enter`: Exit table block.
 
 ## Installatin
@@ -32,6 +32,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
    ```
 2. Install dependency libraries in this plugin directory.
    ```sh
+   npm install
    npm run build
    ```
 3. Start Redmine
@@ -45,12 +46,19 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 ## Note
 
 * Not support Textile format.
+* Not support outline (toc).
 * Not support underline text decoration.
+* Inner link.
+  * link to another project's wiki
+  * other than wiki, e.g. document, news
+  * text decoration at title.
 * Table
   * Value of empty cell is `<br />`.
   * Not support newline in cell.
   * Not support to display cell with align.
 * Not support auto-complete.
+  * issues
+  * mentions
 
 ## Tested Environment
 

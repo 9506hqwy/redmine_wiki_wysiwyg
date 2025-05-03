@@ -224,3 +224,39 @@
         }
     }
 }
+
+.wysisyg-inner-link-dialog {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+    border: none;
+    border-radius: 15px;
+    background-color: #ffffff;
+
+    .box {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0px;
+        padding: 5px;
+        text-align: center;
+        border: none;
+        background-color: #ffffff;
+
+        .label {
+            width: 10vw;
+        }
+
+        .input {
+            width: 40vw;
+        }
+    }
+
+    .box:has(button) {
+        flex-direction: row-reverse;
+
+        button {
+            margin: 0px 4px;
+        }
+    }
+}
