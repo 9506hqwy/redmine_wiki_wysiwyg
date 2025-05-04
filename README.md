@@ -47,13 +47,13 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 
 * Not support Textile format.
 * Not support outline (toc).
-* Not support underline text decoration.
+* Display as is raw HTML for HTML syntax.
+  * Not support menu button that toggles underline text decoration.
 * Inner link.
   * link to another project's wiki
   * other than wiki, e.g. document, news
   * text decoration at title.
 * Table
-  * Value of empty cell is `<br />`.
   * Not support newline in cell.
   * Not support to display cell with align.
 * Not support auto-complete.

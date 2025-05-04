@@ -33,7 +33,7 @@ import { externalLinkView, toggleExternalLinkCommand } from './plugin-external-l
 import { imageView } from './plugin-image';
 import { setupJsToolBar } from './plugin-jstoolbar';
 import { supportLanguages } from './plugin-precode';
-import { tableCellView, tableHeaderView } from './plugin-table';
+import { tableCellExSchema, tableCellView, tableHeaderExSchema, tableHeaderView } from './plugin-table';
 import "./wiki_wysiwyg.css";
 
 var wysiwygEditor = null;
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(externalLinkView)
       .use(toggleExternalLinkCommand)
       .use(imageView)
-      .use([tableCellView, tableHeaderView]);
+      .use([tableCellExSchema, tableCellView, tableHeaderExSchema, tableHeaderView]);
 
     wysiwygEditor.create();
     jstWysiwyg = setupJsToolBar(wysiwygEditor);

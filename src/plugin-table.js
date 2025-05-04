@@ -18,6 +18,57 @@ export const setupTableEditor = (editor) =>{
     wysiwygEditor = editor;
 }
 
+// Extend tableCellSchema.
+// https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/transformer/src/utility/types.ts#L47
+export const tableCellExSchema = tableCellSchema.extendSchema((prev) => {
+  return (ctx) => {
+    const baseSchema = prev(ctx)
+    return {
+      ...baseSchema,
+      toMarkdown: {
+        match: (node) => node.type.name === 'table_cell',
+        runner: (state, node) => {
+          if (node.textContent.length == 0) {
+            // Add empty string when content is only `ProseMirror-trailingBreak`,
+            // because `ProseMirror-trailingBreak` is `<br />` HTML inline content.
+            //
+            // `ProseMirror-trailingBreak` is inserted.
+            // https://github.com/ProseMirror/prosemirror-view/blob/1.39.1/src/viewdesc.ts#L1386
+            state.addNode('text', [], '')
+          } else {
+            state.openNode('tableCell').next(node.content).closeNode();
+          }
+        },
+      },
+    };
+  };
+})
+
+// Extend tableHeaderSchema.
+export const tableHeaderExSchema = tableHeaderSchema.extendSchema((prev) => {
+  return (ctx) => {
+    const baseSchema = prev(ctx)
+    return {
+      ...baseSchema,
+      toMarkdown: {
+        match: (node) => node.type.name === 'table_header',
+        runner: (state, node) => {
+          if (node.textContent.length == 0) {
+            // Add empty string when content is only `ProseMirror-trailingBreak`,
+            // because `ProseMirror-trailingBreak` is `<br />` HTML inline content.
+            //
+            // `ProseMirror-trailingBreak` is inserted.
+            // https://github.com/ProseMirror/prosemirror-view/blob/1.39.1/src/viewdesc.ts#L1386
+            state.addNode('text', [], '')
+          } else {
+            state.openNode('tableCell').next(node.content).closeNode();
+          }
+        },
+      },
+    };
+  };
+})
+
 // View table header AST.
 export const tableHeaderView = $view(
   tableHeaderSchema.node,
