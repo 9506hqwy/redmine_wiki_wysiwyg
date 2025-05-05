@@ -1,6 +1,6 @@
 import { Editor, defaultValueCtx, remarkStringifyOptionsCtx, rootCtx } from '@milkdown/kit/core'
 // preset
-import { commonmark, hardbreakFilterNodes } from "@milkdown/kit/preset/commonmark";
+import { commonmark, hardbreakAttr } from "@milkdown/kit/preset/commonmark";
 import { codeBlockComponent, codeBlockConfig } from "@milkdown/kit/component/code-block";
 import { gfm } from "@milkdown/kit/preset/gfm";
 // component
@@ -34,6 +34,13 @@ import { imageView } from './plugin-image';
 import { setupJsToolBar } from './plugin-jstoolbar';
 import { supportLanguages } from './plugin-precode';
 import { tableCellExSchema, tableCellView, tableHeaderExSchema, tableHeaderView } from './plugin-table';
+import {
+  hardbreakExSchema,
+  insertTableHardbreakCommand,
+  tableHardbreakHandler,
+  tableHardbreakKeymap,
+  tableHardbreakMark,
+} from './plugin-table-hardbreak';
 import "./wiki_wysiwyg.css";
 
 var wysiwygEditor = null;
@@ -133,11 +140,17 @@ document.addEventListener('DOMContentLoaded', function() {
           },
         });
 
-        // Not support break in table.
-        //ctx.set(hardbreakFilterNodes.key, ['code_block']);
+        ctx.set(hardbreakAttr.key, (node) => {
+          return {
+            'data-type': 'hardbreak',
+            'data-is-inline': node.attrs.isInline,
+            'data-is-intable': node.attrs.isIntable,
+          }
+        });
 
         const options = ctx.get(remarkStringifyOptionsCtx);
         options.handlers['innerLink'] = innerLinkHandler;
+        options.handlers['tableHardbreak'] = tableHardbreakHandler;
 
         ctx.update(codeBlockConfig.key, (defaultConfig) => {
           const supportedCodeLangs = supportLanguages().map((l) => l.toLowerCase());
@@ -165,6 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
           };
         });
       })
+      // order the plugins by priority.
+      .use(tableHardbreakKeymap)
       .use(codeBlockComponent)
       .use(commonmark)
       .use(clipboard)
@@ -181,7 +196,9 @@ document.addEventListener('DOMContentLoaded', function() {
       .use(externalLinkView)
       .use(toggleExternalLinkCommand)
       .use(imageView)
-      .use([tableCellExSchema, tableCellView, tableHeaderExSchema, tableHeaderView]);
+      .use([tableCellExSchema, tableCellView, tableHeaderExSchema, tableHeaderView])
+      .use([hardbreakExSchema, tableHardbreakMark])
+      .use(insertTableHardbreakCommand);
 
     wysiwygEditor.create();
     jstWysiwyg = setupJsToolBar(wysiwygEditor);

@@ -49,13 +49,17 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * Not support outline (toc).
 * Display as is raw HTML for HTML syntax.
   * Not support menu button that toggles underline text decoration.
+* In inner wiki link.
+  * Not support text decoration at title part.
+
+## TODO
+
 * Inner link.
   * link to another project's wiki
   * other than wiki, e.g. document, news
-  * text decoration at title.
 * Table
-  * Not support newline in cell.
-* Not support auto-complete.
+  * Delete table.
+* Auto-complete.
   * issues
   * mentions
 
