@@ -55,7 +55,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
   * text decoration at title.
 * Table
   * Not support newline in cell.
-  * Not support to display cell with align.
 * Not support auto-complete.
   * issues
   * mentions

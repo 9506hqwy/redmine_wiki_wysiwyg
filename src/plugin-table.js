@@ -75,6 +75,8 @@ export const tableHeaderView = $view(
   (ctx) => {
     return (node, view, getPos, decorations, innerDecorations) => {
       const header = document.createElement('th');
+      header.style = `text-align: ${node.attrs.alignment}`;
+
       const data = document.createElement('p');
       header.appendChild(data);
       header.addEventListener('click', e => setupShowTableHeaderMenu(e, getPos));
@@ -93,6 +95,8 @@ export const tableCellView = $view(
   (ctx) => {
     return (node, view, getPos, decorations, innerDecorations) => {
       const cell = document.createElement('td');
+      cell.style = `text-align: ${node.attrs.alignment}`;
+
       const data = document.createElement('p');
       cell.appendChild(data);
       cell.addEventListener('click', e => setupShowTableRowMenu(e, getPos));
