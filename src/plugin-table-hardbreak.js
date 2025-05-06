@@ -1,8 +1,8 @@
-import { commandsCtx } from '@milkdown/kit/core';
+import { commandsCtx } from "@milkdown/kit/core";
 import { hardbreakSchema } from "@milkdown/kit/preset/commonmark";
-import { isInTable } from '@milkdown/prose/tables'
-import { $command, $remark, $useKeymap } from '@milkdown/utils';
-import { visit } from 'unist-util-visit';
+import { isInTable } from "@milkdown/prose/tables";
+import { $command, $remark, $useKeymap } from "@milkdown/utils";
+import { visit } from "unist-util-visit";
 
 // `hardbreak` is disabled in table in default.
 // https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/plugins/preset-commonmark/src/plugin/hardbreak-filter-plugin.ts#L6
@@ -12,27 +12,27 @@ import { visit } from 'unist-util-visit';
 
 // Extended toMarkdown method for `hardbreak` in table.
 export const tableHardbreakHandler = (node, _, state, info) => {
-  const exit = state.enter('tableHardbreak');
+  const exit = state.enter("tableHardbreak");
   const tracker = state.createTracker(info);
 
-  let value = tracker.move('<br />');
+  const value = tracker.move("<br />");
 
   exit();
   return value;
-}
+};
 
 // Extended markdown syntax for `hardbreak` in table.
 // Parse markdown text to markdown AST.
 export const tableHardbreakMark = $remark(
-  'remarkTableHardbreak',
+  "remarkTableHardbreak",
   () => () => (ast) => {
-    const find = new RegExp('^<br\\s*/>$');
-    visit(ast, 'html', (node, index, parent) => {
-      if (!node.value || typeof node.value !== 'string') {
+    const find = /^<br\s*\/>$/;
+    visit(ast, "html", (node, index, parent) => {
+      if (!node.value || typeof node.value !== "string") {
         return;
       }
 
-      if (parent.type !== 'tableCell' && parent.type !== 'tableHeader') {
+      if (parent.type !== "tableCell" && parent.type !== "tableHeader") {
         return;
       }
 
@@ -40,16 +40,16 @@ export const tableHardbreakMark = $remark(
         return;
       }
 
-      parent.children.splice(index, 1, { type: 'break', isIntable: true });
+      parent.children.splice(index, 1, { type: "break", isIntable: true });
       return index + 1;
-    })
-  }
+    });
+  },
 );
 
 // Schema for `hardbreak` in table.
 export const hardbreakExSchema = hardbreakSchema.extendSchema((prev) => {
   return (ctx) => {
-    const baseSchema = prev(ctx)
+    const baseSchema = prev(ctx);
     return {
       ...baseSchema,
       attrs: {
@@ -82,7 +82,7 @@ export const hardbreakExSchema = hardbreakSchema.extendSchema((prev) => {
         match: (node) => baseSchema.toMarkdown.match(node),
         runner: (state, node) => {
           if (node.attrs.isIntable) {
-            state.addNode('tableHardbreak');
+            state.addNode("tableHardbreak");
           } else {
             baseSchema.toMarkdown.runner(state, node);
           }
@@ -90,36 +90,36 @@ export const hardbreakExSchema = hardbreakSchema.extendSchema((prev) => {
       },
     };
   };
-})
+});
 
 // Insert `hardbreak` in table.
 export const insertTableHardbreakCommand = $command(
-  'InsertTableHardbreak',
+  "InsertTableHardbreak",
   (ctx) => () => (state, dispatch) => {
     if (!isInTable(state)) {
       return false;
     }
 
-    const { tr } = state
-    tr
-      .setMeta(hardbreakSchema.key, true)
-      .replaceSelectionWith(hardbreakSchema.type(ctx).create({ isIntable: true }))
+    const { tr } = state;
+    tr.setMeta(hardbreakSchema.key, true).replaceSelectionWith(
+      hardbreakSchema.type(ctx).create({ isIntable: true }),
+    );
 
     if (dispatch) {
       dispatch(tr.scrollIntoView());
     }
 
-    return true
-  }
-)
+    return true;
+  },
+);
 
 // Keymap for `hardbreak` in table.
-export const tableHardbreakKeymap = $useKeymap('tableHardbreakKeymap', {
+export const tableHardbreakKeymap = $useKeymap("tableHardbreakKeymap", {
   InsertTableHardbreak: {
-    shortcuts: ['Shift-Enter', 'Enter'],
+    shortcuts: ["Shift-Enter", "Enter"],
     command: (ctx) => {
-      const commands = ctx.get(commandsCtx)
-      return () => commands.call(insertTableHardbreakCommand.key)
+      const commands = ctx.get(commandsCtx);
+      return () => commands.call(insertTableHardbreakCommand.key);
     },
-  }
+  },
 });

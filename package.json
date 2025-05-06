@@ -1,18 +1,22 @@
 {
-  "name": "redmine_wiki_wysiwyg",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "vite build"
-  },
-  "dependencies": {
-    "@codemirror/language-data": "^6.5.1",
-    "@milkdown/kit": "^7.8.0",
-    "codemirror": "^6.0.1"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.51.1",
-    "@types/node": "^22.13.10",
-    "vite": "^6.2.0"
-  }
+    "name": "redmine_wiki_wysiwyg",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "check": "biome check --write",
+        "format": "biome format --write",
+        "lint": "biome lint --write"
+    },
+    "dependencies": {
+        "@codemirror/language-data": "^6.5.1",
+        "@milkdown/kit": "^7.8.0",
+        "codemirror": "^6.0.1"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@playwright/test": "^1.51.1",
+        "@types/node": "^22.13.10",
+        "vite": "^6.2.0"
+    }
 }
