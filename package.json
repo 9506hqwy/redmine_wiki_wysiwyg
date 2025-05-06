@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@codemirror/language-data": "^6.5.1",
-        "@milkdown/kit": "^7.8.0",
+        "@milkdown/kit": "7.8.0",
         "codemirror": "^6.0.1"
     },
     "devDependencies": {
