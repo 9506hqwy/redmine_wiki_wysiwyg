@@ -2,8 +2,9 @@ import { toggleMark } from "@milkdown/prose/commands";
 import { $command, $markSchema, $remark, $view } from "@milkdown/utils";
 import { visit } from "unist-util-visit";
 
-// [[name|display]]
-const innerLinkFormat = "\\[\\[([^ /\\|\\]]+)(\\|([^)\\]]+))?\\]\\]";
+// [[project:name|display]]
+const innerLinkFormat =
+  "\\[\\[(([^ /:\\]]+):)?([^ /\\|\\]]+)(\\|([^)\\]]+))?\\]\\]";
 
 // Extended toMarkdown method  for redmine inner link format.
 export const innerLinkHandler = (node, _, state, info) => {
@@ -11,6 +12,11 @@ export const innerLinkHandler = (node, _, state, info) => {
   const tracker = state.createTracker(info);
 
   let value = tracker.move("[[");
+
+  if (node.project) {
+    value += tracker.move(state.safe(node.project, info));
+    value += tracker.move(":");
+  }
 
   value += tracker.move(state.safe(node.href, info));
 
@@ -55,13 +61,15 @@ export const innerLinkMark = $remark("remarkInnerLink", () => () => (ast) => {
         });
       }
 
-      const name = match[1];
-      const diplay = match[3] ? match[3] : name;
+      const project = match[2];
+      const name = match[3];
+      const diplay = match[5] ? match[5] : name;
       const children = [{ type: "text", value: diplay }];
 
       result.push({
         type: "innerLink",
         href: name,
+        project: project ?? null,
         children: children,
       });
 
@@ -83,6 +91,9 @@ export const innerLinkMark = $remark("remarkInnerLink", () => () => (ast) => {
 export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
   attrs: {
     href: {},
+    project: {
+      default: null,
+    },
   },
   // Set high priority than linkSchema.
   parseDOM: [
@@ -91,6 +102,7 @@ export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
       tag: 'a:not([href*="/"])',
       getAttrs: (dom) => ({
         href: dom.getAttribute("href"),
+        project: dom.dataset.project,
       }),
     },
   ],
@@ -98,8 +110,8 @@ export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
   parseMarkdown: {
     match: (node) => node.type === "innerLink",
     runner: (state, node, markType) => {
-      const { href } = node;
-      state.openMark(markType, { href });
+      const { href, project } = node;
+      state.openMark(markType, { href, project });
       state.next(node.children);
       state.closeMark(markType);
     },
@@ -111,6 +123,7 @@ export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
     runner: (state, mark, node) => {
       state.withMark(mark, "innerLink", undefined, {
         href: mark.attrs.href,
+        project: mark.attrs.project,
         title: node.textContent,
       });
     },
@@ -122,6 +135,7 @@ export const innerLinkView = $view(innerLinkSchema.mark, (ctx) => {
   return (mark, view, inline) => {
     const link = document.createElement("a");
     link.href = mark.attrs.href;
+    link.dataset.project = mark.attrs.project;
 
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -138,6 +152,8 @@ export const innerLinkView = $view(innerLinkSchema.mark, (ctx) => {
       const dialog = setupDialog(
         (e) => updateInnerLink(e, ctx, state, dispatch, node, curMark),
         (d) => {
+          document.getElementById("wysisyg-inner-link-project").value =
+            curMark.attrs.project;
           document.getElementById("wysisyg-inner-link-wiki").value =
             curMark.attrs.href;
           document.getElementById("wysisyg-inner-link-title").value = title;
@@ -176,6 +192,23 @@ export const toggleInnerLinkCommand = $command(
 );
 
 function createDialog(submitFunc) {
+  // project
+  const projectLabel = document.createElement("span");
+  projectLabel.classList.add("label");
+  projectLabel.for = "wysisyg-inner-link-project";
+  projectLabel.innerText = "Project";
+
+  const projectInput = document.createElement("input");
+  projectInput.classList.add("input");
+  projectInput.placeholder = "project name (optional)";
+  projectInput.id = "wysisyg-inner-link-project";
+  setupAutoComplete(projectInput);
+
+  const projectBox = document.createElement("div");
+  projectBox.classList.add("box");
+  projectBox.append(projectLabel);
+  projectBox.append(projectInput);
+
   // wiki
   const wikiLabel = document.createElement("span");
   wikiLabel.classList.add("label");
@@ -235,6 +268,7 @@ function createDialog(submitFunc) {
   const form = document.createElement("form");
   form.method = "dialog";
   form.autocomplete = "off";
+  form.appendChild(projectBox);
   form.appendChild(wikiBox);
   form.appendChild(titleBox);
   form.appendChild(opBox);
@@ -270,6 +304,9 @@ function insertInnerLink(e, ctx, state, dispatch) {
     return false;
   }
 
+  const project = document.getElementById("wysisyg-inner-link-project");
+  const projectText = project.value ? project.value : null;
+
   const title = document.getElementById("wysisyg-inner-link-title");
   const titleText = title.value ? title.value : wikiName;
 
@@ -282,7 +319,7 @@ function insertInnerLink(e, ctx, state, dispatch) {
   tr.insertText(titleText).addMark(
     from,
     to,
-    markType.create({ href: wikiName }),
+    markType.create({ href: wikiName, project: projectText }),
   );
 
   if (dispatch) {
@@ -299,13 +336,20 @@ function updateInnerLink(e, ctx, state, dispatch, node, mark) {
     return false;
   }
 
+  const project = document.getElementById("wysisyg-inner-link-project");
+  const projectText = project.value ? project.value : null;
+
   const { tr, selection } = state;
   const { $from } = selection;
   const from = $from.pos - $from.textOffset;
   const to = from + node.nodeSize;
   const markType = innerLinkSchema.type(ctx);
   tr.removeMark(from, to, mark)
-    .addMark(from, to, markType.create({ href: wikiName }))
+    .addMark(
+      from,
+      to,
+      markType.create({ href: wikiName, project: projectText }),
+    )
     .scrollIntoView();
   dispatch(tr);
 }
@@ -329,7 +373,8 @@ function setupAutoComplete(element) {
 
 function completeList(e, baseUrl) {
   const q = e.target.value;
-  if (q) {
+  const project = document.getElementById("wysisyg-inner-link-project");
+  if (q && !project.value) {
     const option = {
       method: "GET",
       cache: "no-cache",

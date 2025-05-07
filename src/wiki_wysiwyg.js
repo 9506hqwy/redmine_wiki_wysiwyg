@@ -150,7 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         ctx.set(listItemBlockConfig.key, {
           renderLabel: ({ label, listType, checked, readonly }) => {
-            console.log(checked);
             if (checked === undefined) {
               return "";
             }

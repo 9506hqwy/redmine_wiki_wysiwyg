@@ -17,11 +17,18 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 - `CTRL+ALT+1`: Heading level 1.
 - `CTRL+ALT+2`: Heading level 2.
 - `CTRL+ALT+3`: Heading level 3.
+- `CTRL+ALT+8`: Bulk list.
 - `CTRL+ALT+c`: Code block.
 - `CTRL+ALT+x`: Strike through.
+- `CTRL+Shiftb`: Backquote.
+- `Shift+Enter`: Hard break.
 - In code block
+  - `TAB`: Indent level +1.
+  - `Shift+TAB`: Indent level -1.
   - `CTRL+Enter`: Exit code block.
 - In table block
+  - `TAB`: Next cell.
+  - `Shift+TAB`: Previous cell.
   - `CTRL+Enter`: Exit table block.
 
 ## Installatin
@@ -45,20 +52,20 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 
 ## Note
 
+* Delete all columns to delete table.
 * Not support Textile format.
 * Not support outline (toc).
 * Display as is raw HTML for HTML syntax.
   * Not support menu button that toggles underline text decoration.
 * In inner wiki link.
   * Not support text decoration at title part.
+* In list.
+  + Not support empty list item.
 
 ## TODO
 
 * Inner link.
-  * link to another project's wiki
   * other than wiki, e.g. document, news
-* Table
-  * Delete table.
 * Auto-complete.
   * issues
   * mentions
