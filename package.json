@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "cdn": "vite build --config vite.cdn-config.js",
         "check": "biome check --write",
         "format": "biome format --write",
         "lint": "biome lint --write"

@@ -6,7 +6,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 
 ## Features
 
-- Edit wiki using rich text editor powered by [milkdown](https://milkdown.dev/).
+- Edit wiki using rich text editor.
 
 ## Key Bindings
 
@@ -31,13 +31,15 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
   - `Shift+TAB`: Previous cell.
   - `CTRL+Enter`: Exit table block.
 
-## Installatin
+## Installation
 
 1. Download plugin in Redmine plugin directory.
    ```sh
    git clone https://github.com/9506hqwy/redmine_wiki_wysiwyg.git
    ```
-2. Install dependency libraries in this plugin directory.
+2. (Optional) Install dependency libraries in this plugin directory.
+   This plugin uses many javascript modules from CDN in default.
+   So, client can not access internet or low performance, then do this step.
    ```sh
    npm install
    npm run build
@@ -83,3 +85,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
   * SQLite
   * MySQL 5.7 or 8.0
   * PostgreSQL 12
+
+## References
+
+* [milkdown](https://milkdown.dev/)
