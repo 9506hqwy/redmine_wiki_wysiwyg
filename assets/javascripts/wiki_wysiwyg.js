@@ -1,6 +1,6 @@
 import { defaultKeymap as ie, indentWithTab as le } from "https://cdn.jsdelivr.net/npm/@codemirror/commands@6.8.1/+esm";
 import { languages as de } from "https://cdn.jsdelivr.net/npm/@codemirror/language-data@6.5.1/+esm";
-import { keymap as ue } from "https://cdn.jsdelivr.net/npm/@codemirror/view@6.36.5/+esm";
+import { keymap as ue } from "https://cdn.jsdelivr.net/npm/@codemirror/view@6.36.7/+esm";
 import { codeBlockConfig as me, codeBlockComponent as pe } from "https://esm.run/@milkdown/kit@7.8.0/lib/component/code-block.js";
 import { listItemBlockConfig as fe, defaultListItemBlockConfig as ye, listItemBlockComponent as he } from "https://esm.run/@milkdown/kit@7.8.0/lib/component/list-item-block.js";
 import { editorViewCtx as ke, commandsCtx as we, Editor as ge, rootCtx as be, defaultValueCtx as ve, remarkStringifyOptionsCtx as Le } from "https://esm.run/@milkdown/kit@7.8.0/lib/core.js";
@@ -43,7 +43,7 @@ const Z = j(
 ), W = (t, e = null) => (n) => (n.get(ke).focus(), h(t, e)(n)), Qe = B(M.mark, (t) => (e, n, o) => {
   const r = document.createElement("a");
   return r.href = e.attrs.href, r.title = e.attrs.title, r.classList.add("external"), r.addEventListener("click", (a) => {
-    a.preventDefault();
+    a.preventDefault(), a.stopPropagation();
     const { dispatch: s, state: c } = n, { tr: i, selection: d } = c, { $from: l } = d, u = l.parent.child(l.index()), m = u.marks.find(
       ({ type: y }) => y === M.type(t)
     ), f = window.prompt("URL:", m.attrs.href), p = f ? V(f) : void 0;
@@ -193,7 +193,7 @@ const ot = "\\[\\[(([^ /:\\]]+):)?([^ /\\|\\]]+)(\\|([^)\\]]+))?\\]\\]", rt = (t
 })), st = B(T.mark, (t) => (e, n, o) => {
   const r = document.createElement("a");
   return r.href = e.attrs.href, r.dataset.project = e.attrs.project, r.addEventListener("click", (a) => {
-    a.preventDefault();
+    a.preventDefault(), a.stopPropagation();
     const { dispatch: s, state: c } = n, { selection: i } = c, { $from: d } = i, l = d.parent.child(d.index()), u = l.marks.find(
       ({ type: p }) => p === T.type(t)
     ), m = l.textContent;
@@ -281,6 +281,8 @@ function lt(t, e, n, o, r, a) {
   ).scrollIntoView(), o(l);
 }
 function J(t) {
+  if (!window.rm)
+    return;
   const e = rm.AutoComplete.dataSources.wiki_pages;
   let n = null;
   t.addEventListener("keyup", (o) => {

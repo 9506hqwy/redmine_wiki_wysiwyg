@@ -139,6 +139,7 @@ export const innerLinkView = $view(innerLinkSchema.mark, (ctx) => {
 
     link.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
 
       const { dispatch, state } = view;
       const { selection } = state;
@@ -355,6 +356,10 @@ function updateInnerLink(e, ctx, state, dispatch, node, mark) {
 }
 
 function setupAutoComplete(element) {
+  if (!window.rm) {
+    return;
+  }
+
   const baseUrl = rm.AutoComplete.dataSources.wiki_pages;
   let timer = null;
 

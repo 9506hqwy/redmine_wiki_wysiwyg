@@ -12,6 +12,7 @@ export const externalLinkView = $view(linkSchema.mark, (ctx) => {
 
     link.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
 
       const { dispatch, state } = view;
       const { tr, selection } = state;
