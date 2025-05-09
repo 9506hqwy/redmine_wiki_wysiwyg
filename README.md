@@ -8,6 +8,46 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 
 - Edit wiki using rich text editor.
 
+## Installation
+
+1. Download plugin in Redmine plugin directory.
+   ```sh
+   git clone https://github.com/9506hqwy/redmine_wiki_wysiwyg.git
+   ```
+2. (Optional) Build dependency libraries in this plugin directory.
+   This plugin uses many javascript modules from CDN in default.
+   So, client can not access internet or low performance, then do this step.
+   e.g. use npm to build. [bun](https://bun.sh/) or [deno](https://deno.com/) is available alternatively.
+   ```sh
+   npm install
+   npm run build
+   ```
+3. Start Redmine
+
+## Configuration
+
+1. Enable plugin module.
+
+   Check [Wiki WYSIWYG] in project setting.
+
+## Usage
+
+* Text decoration
+  * Click menu button to start text decoration, or click menu after select text to toggle to text decoration.
+* Table
+  * Click head cell to change text align .
+  * Click data cell to operation for columne or row.
+* Inner wiki link
+  * Click menu button to add new inner text, or click menu after select text to toggle to inner link.
+  * Click text to update link destination.
+  * Change text to update display text.
+* External link
+  * Click menu button to add new external text, or click menu after select text to toggle to external link.
+  * Click text to update link destination.
+  * Change text to update display text.
+* Image
+  * Click menu button to add image. Input attached file name or external URL.
+
 ## Key Bindings
 
 - `CTRL+b`: Bold.
@@ -22,7 +62,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 - `CTRL+ALT+x`: Strike through.
 - `CTRL+Shiftb`: Backquote.
 - `Shift+Enter`: Hard break.
-- In code block
+- In list block
   - `TAB`: Indent level +1.
   - `Shift+TAB`: Indent level -1.
   - `CTRL+Enter`: Exit code block.
@@ -30,27 +70,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
   - `TAB`: Next cell.
   - `Shift+TAB`: Previous cell.
   - `CTRL+Enter`: Exit table block.
-
-## Installation
-
-1. Download plugin in Redmine plugin directory.
-   ```sh
-   git clone https://github.com/9506hqwy/redmine_wiki_wysiwyg.git
-   ```
-2. (Optional) Install dependency libraries in this plugin directory.
-   This plugin uses many javascript modules from CDN in default.
-   So, client can not access internet or low performance, then do this step.
-   ```sh
-   npm install
-   npm run build
-   ```
-3. Start Redmine
-
-## Configuration
-
-1. Enable plugin module.
-
-   Check [Wiki WYSIWYG] in project setting.
 
 ## Note
 
@@ -71,6 +90,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * Auto-complete.
   * issues
   * mentions
+* Compatible with [redmine_wiki_diff_alternative](https://github.com/9506hqwy/redmine_wiki_diff_alternative).
 
 ## Tested Environment
 

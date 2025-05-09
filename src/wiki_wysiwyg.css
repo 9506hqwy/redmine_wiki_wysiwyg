@@ -34,6 +34,14 @@
   milkdown-list-item-block {
     display: block;
 
+    ul {
+      margin-bottom: 0px;
+    }
+
+    ol {
+      margin-bottom: 0px;
+    }
+
     .list-item:has(input) {
       display: flex;
       align-items: flex-start;
@@ -121,6 +129,7 @@
         background-color: #fafafa;
         border: 1px solid #e2e2e2;
         border-radius: 3px;
+        overflow-x: auto;
         overflow-y: hidden;
       }
     }
