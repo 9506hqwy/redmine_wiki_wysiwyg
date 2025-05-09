@@ -14,9 +14,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
    ```sh
    git clone https://github.com/9506hqwy/redmine_wiki_wysiwyg.git
    ```
-2. (Optional) Build dependency libraries in this plugin directory.
-   This plugin uses many javascript modules from CDN in default.
-   So, client can not access internet or low performance, then do this step.
+2. Build dependency libraries in this plugin directory.
    e.g. use npm to build. [bun](https://bun.sh/) or [deno](https://deno.com/) is available alternatively.
    ```sh
    npm install
