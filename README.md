@@ -33,8 +33,8 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * Text decoration
   * Click menu button to start text decoration, or click menu after select text to toggle to text decoration.
 * Table
-  * Click head cell to change text align .
-  * Click data cell to operation for columne or row.
+  * Click header cell to change text align.
+  * Click data cell to operate for columne or row.
 * Inner wiki link
   * Click menu button to add new inner text, or click menu after select text to toggle to inner link.
   * Click text to update link destination.

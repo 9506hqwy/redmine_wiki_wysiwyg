@@ -27,7 +27,10 @@
     outline: none;
   }
 
-  ul:has(.milkdown-list-item-block span.milkdown-icon.checked, .milkdown-list-item-block span.milkdown-icon.unchecked) {
+  ul:has(
+      .milkdown-list-item-block span.milkdown-icon.checked,
+      .milkdown-list-item-block span.milkdown-icon.unchecked
+    ) {
     padding-left: 0px;
   }
 
@@ -56,7 +59,8 @@
         padding-left: 20px;
       }
 
-      span.milkdown-icon.checked, span.milkdown-icon.unchecked {
+      span.milkdown-icon.checked,
+      span.milkdown-icon.unchecked {
         cursor: pointer;
       }
     }

@@ -3,12 +3,12 @@ import { $command, $markSchema, $remark, $view } from "@milkdown/utils";
 import { visit } from "unist-util-visit";
 
 // [[project:name|display]]
-const innerLinkFormat =
+const innerLinkWikiFormat =
   "\\[\\[(([^ /:\\]]+):)?([^ /\\|\\]]+)(\\|([^)\\]]+))?\\]\\]";
 
 // Extended toMarkdown method  for redmine inner link format.
-export const innerLinkHandler = (node, _, state, info) => {
-  const exit = state.enter("innerLink");
+export const innerLinkWikiHandler = (node, _, state, info) => {
+  const exit = state.enter("innerLinkWiki");
   const tracker = state.createTracker(info);
 
   let value = tracker.move("[[");
@@ -39,56 +39,59 @@ export const innerLinkHandler = (node, _, state, info) => {
 
 // Extended markdown syntax for redmine inner link format.
 // Parse markdown text to markdown AST.
-export const innerLinkMark = $remark("remarkInnerLink", () => () => (ast) => {
-  const find = new RegExp(innerLinkFormat, "g");
-  visit(ast, "text", (node, index, parent) => {
-    if (!node.value || typeof node.value !== "string") {
-      return;
-    }
-
-    const result = [];
-    let start = 0;
-
-    find.lastIndex = 0;
-    let match = find.exec(node.value);
-    while (match) {
-      const position = match.index;
-
-      if (start !== position) {
-        result.push({
-          type: "text",
-          value: node.value.slice(start, position),
-        });
+export const innerLinkWikiMark = $remark(
+  "remarkInnerLinkWiki",
+  () => () => (ast) => {
+    const find = new RegExp(innerLinkWikiFormat, "g");
+    visit(ast, "text", (node, index, parent) => {
+      if (!node.value || typeof node.value !== "string") {
+        return;
       }
 
-      const project = match[2];
-      const name = match[3];
-      const diplay = match[5] ? match[5] : name;
-      const children = [{ type: "text", value: diplay }];
+      const result = [];
+      let start = 0;
 
-      result.push({
-        type: "innerLink",
-        href: name,
-        project: project ?? null,
-        children: children,
-      });
+      find.lastIndex = 0;
+      let match = find.exec(node.value);
+      while (match) {
+        const position = match.index;
 
-      start = position + match[0].length;
-      match = find.exec(node.value);
-    }
+        if (start !== position) {
+          result.push({
+            type: "text",
+            value: node.value.slice(start, position),
+          });
+        }
 
-    if (start < node.value.length) {
-      result.push({ type: "text", value: node.value.slice(start) });
-    }
+        const project = match[2];
+        const name = match[3];
+        const diplay = match[5] ? match[5] : name;
+        const children = [{ type: "text", value: diplay }];
 
-    parent.children.splice(index, 1, ...result);
-    return index + result.length;
-  });
-});
+        result.push({
+          type: "innerLinkWiki",
+          href: name,
+          project: project ?? null,
+          children: children,
+        });
 
-// Schema for innerLink AST.
+        start = position + match[0].length;
+        match = find.exec(node.value);
+      }
+
+      if (start < node.value.length) {
+        result.push({ type: "text", value: node.value.slice(start) });
+      }
+
+      parent.children.splice(index, 1, ...result);
+      return index + result.length;
+    });
+  },
+);
+
+// Schema for innerLinkWiki AST.
 // https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/transformer/src/utility/types.ts#L57
-export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
+export const innerLinkWikiSchema = $markSchema("innerLinkWiki", (ctx) => ({
   attrs: {
     href: {},
     project: {
@@ -106,9 +109,9 @@ export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
       }),
     },
   ],
-  // Use innerLinkMark remark.
+  // Use innerLinkWikiMark remark.
   parseMarkdown: {
-    match: (node) => node.type === "innerLink",
+    match: (node) => node.type === "innerLinkWiki",
     runner: (state, node, markType) => {
       const { href, project } = node;
       state.openMark(markType, { href, project });
@@ -119,9 +122,9 @@ export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
   // Render markdown text.
   // AST --(toMarkdown)--> markdown text.
   toMarkdown: {
-    match: (mark) => mark.type.name === "innerLink",
+    match: (mark) => mark.type.name === "innerLinkWiki",
     runner: (state, mark, node) => {
-      state.withMark(mark, "innerLink", undefined, {
+      state.withMark(mark, "innerLinkWiki", undefined, {
         href: mark.attrs.href,
         project: mark.attrs.project,
         title: node.textContent,
@@ -130,8 +133,8 @@ export const innerLinkSchema = $markSchema("innerLink", (ctx) => ({
   },
 }));
 
-// View innerLink AST.
-export const innerLinkView = $view(innerLinkSchema.mark, (ctx) => {
+// View innerLinkWiki AST.
+export const innerLinkWikiView = $view(innerLinkWikiSchema.mark, (ctx) => {
   return (mark, view, inline) => {
     const link = document.createElement("a");
     link.href = mark.attrs.href;
@@ -146,12 +149,12 @@ export const innerLinkView = $view(innerLinkSchema.mark, (ctx) => {
       const { $from } = selection;
       const node = $from.parent.child($from.index());
       const curMark = node.marks.find(
-        ({ type }) => type === innerLinkSchema.type(ctx),
+        ({ type }) => type === innerLinkWikiSchema.type(ctx),
       );
       const title = node.textContent;
 
       const dialog = setupDialog(
-        (e) => updateInnerLink(e, ctx, state, dispatch, node, curMark),
+        (e) => updateInnerLinkWiki(e, ctx, state, dispatch, node, curMark),
         (d) => {
           document.getElementById("wysisyg-inner-link-project").value =
             curMark.attrs.project;
@@ -170,25 +173,25 @@ export const innerLinkView = $view(innerLinkSchema.mark, (ctx) => {
   };
 });
 
-// Insert or toggle text <--> innerLink AST.
-export const toggleInnerLinkCommand = $command(
-  "InnerLink",
+// Insert or toggle text <--> innerLinkWiki AST.
+export const toggleInnerLinkWikiCommand = $command(
+  "InnerLinkWiki",
   (ctx) => () => (state, dispatch) => {
     const { selection } = state;
     if (selection.empty) {
-      // Insert new innerLink.
+      // Insert new innerLinkWiki.
       const dialog = setupDialog((e) =>
-        insertInnerLink(e, ctx, state, dispatch),
+        insertInnerLinkWiki(e, ctx, state, dispatch),
       );
       dialog.showModal();
       return true;
     }
 
-    // Toggle text and innerLink.
+    // Toggle text and innerLinkWiki.
     const { $from, $to } = selection;
     const node = $from.node();
     const href = node.textContent.slice($from.parentOffset, $to.parentOffset);
-    return toggleMark(innerLinkSchema.type(ctx), { href })(state, dispatch);
+    return toggleMark(innerLinkWikiSchema.type(ctx), { href })(state, dispatch);
   },
 );
 
@@ -296,7 +299,7 @@ function setupDialog(submitFunc, setupFunc = null) {
   return dialog;
 }
 
-function insertInnerLink(e, ctx, state, dispatch) {
+function insertInnerLinkWiki(e, ctx, state, dispatch) {
   e.stopPropagation();
 
   const wiki = document.getElementById("wysisyg-inner-link-wiki");
@@ -314,7 +317,7 @@ function insertInnerLink(e, ctx, state, dispatch) {
   const { selection, tr } = state;
   const { $from } = selection;
 
-  const markType = innerLinkSchema.type(ctx);
+  const markType = innerLinkWikiSchema.type(ctx);
   const from = $from.pos;
   const to = from + titleText.length;
   tr.insertText(titleText).addMark(
@@ -328,7 +331,7 @@ function insertInnerLink(e, ctx, state, dispatch) {
   }
 }
 
-function updateInnerLink(e, ctx, state, dispatch, node, mark) {
+function updateInnerLinkWiki(e, ctx, state, dispatch, node, mark) {
   e.stopPropagation();
 
   const wiki = document.getElementById("wysisyg-inner-link-wiki");
@@ -344,7 +347,7 @@ function updateInnerLink(e, ctx, state, dispatch, node, mark) {
   const { $from } = selection;
   const from = $from.pos - $from.textOffset;
   const to = from + node.nodeSize;
-  const markType = innerLinkSchema.type(ctx);
+  const markType = innerLinkWikiSchema.type(ctx);
   tr.removeMark(from, to, mark)
     .addMark(
       from,

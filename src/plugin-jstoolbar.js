@@ -19,7 +19,7 @@ import {
   wrapInTaskListCommand,
 } from "./plugin-commands";
 import { toggleExternalLinkCommand } from "./plugin-external-link";
-import { toggleInnerLinkCommand } from "./plugin-inner-link";
+import { toggleInnerLinkWikiCommand } from "./plugin-inner-link";
 import { setupShowPrecodeMenu } from "./plugin-precode";
 import { setupTableEditor } from "./plugin-table";
 
@@ -170,7 +170,7 @@ function createJsToolBar(editor) {
   appendChildIf(
     getJstb("link"),
     bar,
-    setupButton(createButton("link"), editor, toggleInnerLinkCommand),
+    setupButton(createButton("link"), editor, toggleInnerLinkWikiCommand),
   );
   bar.appendChild(
     setupButton(createButton("extlink"), editor, toggleExternalLinkCommand),

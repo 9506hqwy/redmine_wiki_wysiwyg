@@ -35,11 +35,11 @@ import {
 } from "./plugin-external-link";
 import { imageView } from "./plugin-image";
 import {
-  innerLinkHandler,
-  innerLinkMark,
-  innerLinkSchema,
-  innerLinkView,
-  toggleInnerLinkCommand,
+  innerLinkWikiHandler,
+  innerLinkWikiMark,
+  innerLinkWikiSchema,
+  innerLinkWikiView,
+  toggleInnerLinkWikiCommand,
 } from "./plugin-inner-link";
 import { setupJsToolBar } from "./plugin-jstoolbar";
 import { supportLanguages } from "./plugin-precode";
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const options = ctx.get(remarkStringifyOptionsCtx);
-        options.handlers.innerLink = innerLinkHandler;
+        options.handlers.innerLinkWiki = innerLinkWikiHandler;
         options.handlers.tableHardbreak = tableHardbreakHandler;
 
         ctx.update(codeBlockConfig.key, (defaultConfig) => {
@@ -214,8 +214,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .use(toggleInlineCodeExCommand)
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
-      .use([innerLinkMark, innerLinkSchema, innerLinkView])
-      .use(toggleInnerLinkCommand)
+      .use([innerLinkWikiMark, innerLinkWikiSchema, innerLinkWikiView])
+      .use(toggleInnerLinkWikiCommand)
       .use(externalLinkView)
       .use(toggleExternalLinkCommand)
       .use(imageView)
