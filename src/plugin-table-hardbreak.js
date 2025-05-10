@@ -5,7 +5,7 @@ import { $command, $remark, $useKeymap } from "@milkdown/utils";
 import { visit } from "unist-util-visit";
 
 // `hardbreak` is disabled in table in default.
-// https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/plugins/preset-commonmark/src/plugin/hardbreak-filter-plugin.ts#L6
+// https://github.com/Milkdown/milkdown/blob/v7.10.0/packages/plugins/preset-commonmark/src/plugin/hardbreak-filter-plugin.ts#L7
 //
 // `hardbreak` is replaced whitespace in table.
 // https://github.com/syntax-tree/mdast-util-to-markdown/blob/2.1.2/lib/handle/break.js#L19

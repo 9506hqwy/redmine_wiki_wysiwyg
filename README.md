@@ -15,7 +15,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
    git clone https://github.com/9506hqwy/redmine_wiki_wysiwyg.git
    ```
 2. Build dependency libraries in this plugin directory.
-   e.g. use npm to build. [bun](https://bun.sh/) or [deno](https://deno.com/) is available alternatively.
+   e.g. use [npm](https://nodejs.org/en) to build. [bun](https://bun.sh/) or [deno](https://deno.com/) is available alternatively.
    ```sh
    npm install
    npm run build
@@ -78,8 +78,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
   * Not support menu button that toggles underline text decoration.
 * In inner wiki link.
   * Not support text decoration at title part.
-* In list.
-  + Not support empty list item.
 
 ## TODO
 

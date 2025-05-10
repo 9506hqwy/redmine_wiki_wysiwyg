@@ -1,4 +1,4 @@
-.milkdown {
+#wysiwyg_content_text {
   position: relative;
 
   .ProseMirror {
@@ -27,11 +27,11 @@
     outline: none;
   }
 
-  ul:has(milkdown-list-item-block input) {
+  ul:has(.milkdown-list-item-block span.milkdown-icon.checked, .milkdown-list-item-block span.milkdown-icon.unchecked) {
     padding-left: 0px;
   }
 
-  milkdown-list-item-block {
+  .milkdown-list-item-block {
     display: block;
 
     ul {
@@ -42,26 +42,27 @@
       margin-bottom: 0px;
     }
 
-    .list-item:has(input) {
+    .list-item:has(span.milkdown-icon.checked, span.milkdown-icon.unchecked) {
       display: flex;
       align-items: flex-start;
 
       .children {
+        margin-left: 4px;
         line-height: 24px;
-
-        p {
-          padding-bottom: 0px !important;
-        }
       }
 
       ul {
         margin-bottom: 0px;
         padding-left: 20px;
       }
+
+      span.milkdown-icon.checked, span.milkdown-icon.unchecked {
+        cursor: pointer;
+      }
     }
   }
 
-  milkdown-code-block {
+  .milkdown-code-block {
     display: flex;
     flex-direction: column;
 

@@ -1,6 +1,15 @@
 import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+  plugins: [
+    vue(),
+  ],
+  resolve: {
+    alias: {
+      "vue": "vue/dist/vue.runtime.esm-browser.prod.js",
+    },
+  },
   build: {
     outDir: 'assets',
     rollupOptions: {

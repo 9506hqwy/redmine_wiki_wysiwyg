@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         ctx.set(listItemBlockConfig.key, {
           renderLabel: ({ label, listType, checked, readonly }) => {
-            if (checked === undefined) {
+            if (checked === null) {
               return "";
             }
             return defaultListItemBlockConfig.renderLabel({
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       })
       // order the plugins by priority.
-      .use(tableHardbreakKeymap)
+      .use([tableHardbreakKeymap, tableHardbreakMark])
       .use(codeBlockComponent)
       .use(commonmark)
       .use(clipboard)
@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tableHeaderExSchema,
         tableHeaderView,
       ])
-      .use([hardbreakExSchema, tableHardbreakMark])
+      .use(hardbreakExSchema)
       .use(insertTableHardbreakCommand);
 
     wysiwygEditor.create();
