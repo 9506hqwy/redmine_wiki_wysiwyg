@@ -157,7 +157,7 @@ function createJsToolBar(editor) {
   appendChildIf(
     getJstb("pre"),
     bar,
-    setupButton(createButton("pre"), editor, createCodeBlockCommand),
+    setupButton(createButton("pre"), editor, createCodeBlockCommand, "text"),
   );
   appendChildIf(
     getJstb("precode"),
