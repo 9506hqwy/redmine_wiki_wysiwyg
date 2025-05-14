@@ -35,6 +35,10 @@ import {
 } from "./plugin-external-link";
 import { imageView } from "./plugin-image";
 import {
+  innerLinkIssueHandler,
+  innerLinkIssueMark,
+  innerLinkIssueRule,
+  innerLinkIssueSchema,
   innerLinkWikiHandler,
   innerLinkWikiMark,
   innerLinkWikiSchema,
@@ -171,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const options = ctx.get(remarkStringifyOptionsCtx);
+        options.handlers.innerLinkIssue = innerLinkIssueHandler;
         options.handlers.innerLinkWiki = innerLinkWikiHandler;
         options.handlers.tableHardbreak = tableHardbreakHandler;
 
@@ -214,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .use(toggleInlineCodeExCommand)
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
+      .use([innerLinkIssueMark, innerLinkIssueRule, innerLinkIssueSchema])
       .use([innerLinkWikiMark, innerLinkWikiSchema, innerLinkWikiView])
       .use(toggleInnerLinkWikiCommand)
       .use(externalLinkView)

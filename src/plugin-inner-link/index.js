@@ -1,4 +1,10 @@
 import {
+  innerLinkIssueHandler,
+  innerLinkIssueMark,
+  innerLinkIssueRule,
+  innerLinkIssueSchema,
+} from "./issue";
+import {
   innerLinkWikiHandler,
   innerLinkWikiMark,
   innerLinkWikiSchema,
@@ -7,6 +13,10 @@ import {
 } from "./wiki";
 
 export {
+  innerLinkIssueHandler,
+  innerLinkIssueMark,
+  innerLinkIssueRule,
+  innerLinkIssueSchema,
   innerLinkWikiHandler,
   innerLinkWikiMark,
   innerLinkWikiSchema,
