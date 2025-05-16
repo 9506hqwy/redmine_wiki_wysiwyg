@@ -39,6 +39,8 @@ import {
   innerLinkIssueMark,
   innerLinkIssueRule,
   innerLinkIssueSchema,
+  innerLinkIssueSlash,
+  innerLinkIssueSlashPlugin,
   innerLinkWikiHandler,
   innerLinkWikiMark,
   innerLinkWikiSchema,
@@ -205,6 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
             languages: supportedLanguages,
           };
         });
+
+        ctx.set(innerLinkIssueSlash.key, innerLinkIssueSlashPlugin(ctx));
       })
       // order the plugins by priority.
       .use([tableHardbreakKeymap, tableHardbreakMark])
@@ -220,6 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .use(unwrapInBlockquoteCommand)
       .use(wrapInTaskListCommand)
       .use([innerLinkIssueMark, innerLinkIssueRule, innerLinkIssueSchema])
+      .use(innerLinkIssueSlash)
       .use([innerLinkWikiMark, innerLinkWikiSchema, innerLinkWikiView])
       .use(toggleInnerLinkWikiCommand)
       .use(externalLinkView)

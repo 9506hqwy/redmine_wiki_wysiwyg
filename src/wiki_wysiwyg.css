@@ -138,6 +138,10 @@
       }
     }
   }
+
+  .tribute-container[data-show="false"] {
+    display: none;
+  }
 }
 
 #wysiwyg_content_text {

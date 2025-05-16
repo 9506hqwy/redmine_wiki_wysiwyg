@@ -84,7 +84,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * Inner link.
   * other than wiki, e.g. document, news
 * Auto-complete.
-  * issues
   * mentions
 * Compatible with [redmine_wiki_diff_alternative](https://github.com/9506hqwy/redmine_wiki_diff_alternative).
 

@@ -3,6 +3,8 @@ import {
   innerLinkIssueMark,
   innerLinkIssueRule,
   innerLinkIssueSchema,
+  innerLinkIssueSlash,
+  innerLinkIssueSlashPlugin,
 } from "./issue";
 import {
   innerLinkWikiHandler,
@@ -17,6 +19,8 @@ export {
   innerLinkIssueMark,
   innerLinkIssueRule,
   innerLinkIssueSchema,
+  innerLinkIssueSlash,
+  innerLinkIssueSlashPlugin,
   innerLinkWikiHandler,
   innerLinkWikiMark,
   innerLinkWikiSchema,
