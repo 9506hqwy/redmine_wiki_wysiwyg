@@ -41,6 +41,13 @@ import {
   innerLinkIssueSchema,
   innerLinkIssueSlash,
   innerLinkIssueSlashPlugin,
+  innerLinkUserHandler,
+  innerLinkUserMark,
+  innerLinkUserRule,
+  innerLinkUserSchema,
+  innerLinkUserSlash,
+  innerLinkUserSlashPlugin,
+  innerLinkUserView,
   innerLinkWikiHandler,
   innerLinkWikiMark,
   innerLinkWikiSchema,
@@ -178,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const options = ctx.get(remarkStringifyOptionsCtx);
         options.handlers.innerLinkIssue = innerLinkIssueHandler;
+        options.handlers.innerLinkUser = innerLinkUserHandler;
         options.handlers.innerLinkWiki = innerLinkWikiHandler;
         options.handlers.tableHardbreak = tableHardbreakHandler;
 
@@ -209,6 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         ctx.set(innerLinkIssueSlash.key, innerLinkIssueSlashPlugin(ctx));
+        ctx.set(innerLinkUserSlash.key, innerLinkUserSlashPlugin(ctx));
       })
       // order the plugins by priority.
       .use([tableHardbreakKeymap, tableHardbreakMark])
@@ -225,6 +234,13 @@ document.addEventListener("DOMContentLoaded", () => {
       .use(wrapInTaskListCommand)
       .use([innerLinkIssueMark, innerLinkIssueRule, innerLinkIssueSchema])
       .use(innerLinkIssueSlash)
+      .use([
+        innerLinkUserMark,
+        innerLinkUserRule,
+        innerLinkUserSchema,
+        innerLinkUserView,
+      ])
+      .use(innerLinkUserSlash)
       .use([innerLinkWikiMark, innerLinkWikiSchema, innerLinkWikiView])
       .use(toggleInnerLinkWikiCommand)
       .use(externalLinkView)
