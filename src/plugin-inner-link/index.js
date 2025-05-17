@@ -7,6 +7,13 @@ import {
   innerLinkIssueSlashPlugin,
 } from "./issue";
 import {
+  innerLinkOtherHandler,
+  innerLinkOtherMark,
+  innerLinkOtherRule,
+  innerLinkOtherSchema,
+  innerLinkOtherView,
+} from "./other";
+import {
   innerLinkUserHandler,
   innerLinkUserMark,
   innerLinkUserRule,
@@ -30,6 +37,11 @@ export {
   innerLinkIssueSchema,
   innerLinkIssueSlash,
   innerLinkIssueSlashPlugin,
+  innerLinkOtherHandler,
+  innerLinkOtherMark,
+  innerLinkOtherRule,
+  innerLinkOtherSchema,
+  innerLinkOtherView,
   innerLinkUserHandler,
   innerLinkUserMark,
   innerLinkUserRule,

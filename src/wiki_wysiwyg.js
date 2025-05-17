@@ -41,6 +41,11 @@ import {
   innerLinkIssueSchema,
   innerLinkIssueSlash,
   innerLinkIssueSlashPlugin,
+  innerLinkOtherHandler,
+  innerLinkOtherMark,
+  innerLinkOtherRule,
+  innerLinkOtherSchema,
+  innerLinkOtherView,
   innerLinkUserHandler,
   innerLinkUserMark,
   innerLinkUserRule,
@@ -185,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const options = ctx.get(remarkStringifyOptionsCtx);
         options.handlers.innerLinkIssue = innerLinkIssueHandler;
+        options.handlers.innerLinkOther = innerLinkOtherHandler;
         options.handlers.innerLinkUser = innerLinkUserHandler;
         options.handlers.innerLinkWiki = innerLinkWikiHandler;
         options.handlers.tableHardbreak = tableHardbreakHandler;
@@ -234,6 +240,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .use(wrapInTaskListCommand)
       .use([innerLinkIssueMark, innerLinkIssueRule, innerLinkIssueSchema])
       .use(innerLinkIssueSlash)
+      .use([
+        innerLinkOtherMark,
+        innerLinkOtherRule,
+        innerLinkOtherSchema,
+        innerLinkOtherView,
+      ])
       .use([
         innerLinkUserMark,
         innerLinkUserRule,
