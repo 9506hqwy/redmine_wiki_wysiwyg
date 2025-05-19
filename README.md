@@ -79,10 +79,6 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * In inner wiki link.
   * Not support text decoration at title part.
 
-## TODO
-
-* Compatible with [redmine_wiki_diff_alternative](https://github.com/9506hqwy/redmine_wiki_diff_alternative).
-
 ## Tested Environment
 
 * Redmine (Docker Image)

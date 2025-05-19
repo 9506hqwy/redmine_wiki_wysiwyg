@@ -76,31 +76,13 @@ import {
 } from "./plugin-table-hardbreak";
 import "./wiki_wysiwyg.css";
 
-let wysiwygEditor = null;
-
 document.addEventListener("DOMContentLoaded", () => {
-  const editTab = document.querySelector("div.jstTabs .tab-edit");
-  const previewTab = document.querySelector("div.jstTabs .tab-preview");
-  const wysiwygTab = document.querySelector(".tab-wysiwyg");
-  if (previewTab && wysiwygTab) {
-    previewTab
-      .closest("ul")
-      .insertBefore(wysiwygTab.parentNode, previewTab.parentNode.nextSibling);
-  } else {
-    wysiwygTab.style.display = "none";
-  }
-
-  const jst = document.querySelector("div.jstTabs .tab-elements .jstElements");
   let jstWysiwyg = null;
+  let wysiwygEditor = null;
+  let wysiwygTimer = null;
 
-  const editContent = document.querySelector("#content_text");
-  const previewContent = document.querySelector("#preview_content_text");
-  const wysiwygContent = document.querySelector("#wysiwyg_content_text");
-  if (previewContent && wysiwygContent) {
-    previewContent.parentNode.appendChild(wysiwygContent);
-  } else {
-    wysiwygContent.style.display = "none";
-  }
+  const wysiwygTab = initWysiwygTab();
+  const wysiwygContent = initWysiwygContent();
 
   const commit = document.querySelector('input[name="commit"]');
   const wysiwygCommit = document.querySelector('input[name="wysiwyg-commit"]');
@@ -109,11 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   wysiwygCommit.addEventListener("click", (e) => {
     e.preventDefault();
-    editContent.value = wysiwygEditor.action(getMarkdown());
+    setContent(wysiwygEditor);
     commit.click();
   });
 
-  const disablewysiwygContent = () => {
+  const disableWysiwygContent = () => {
     wysiwygTab.classList.remove("selected");
 
     if (jstWysiwyg !== null) {
@@ -123,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     wysiwygContent.classList.add("hidden");
     if (wysiwygEditor !== null) {
-      editContent.value = wysiwygEditor.action(getMarkdown());
+      setContent(wysiwygEditor);
       wysiwygEditor.destroy();
       wysiwygEditor = null;
     }
@@ -132,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     wysiwygCommit.hidden = true;
   };
 
-  const enablewysiwygContent = (e) => {
+  const enableWysiwygContent = (e) => {
     e.preventDefault();
 
     if (e.target.classList.contains("selected")) {
@@ -142,14 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
     commit.hidden = true;
     wysiwygCommit.hidden = false;
 
-    editTab.classList.remove("selected");
-    previewTab.classList.remove("selected");
+    initTabs();
     wysiwygTab.classList.add("selected");
 
-    jst.classList.add("hidden");
-
-    editContent.classList.add("hidden");
-    previewContent.classList.add("hidden");
+    initContents();
     wysiwygContent.classList.remove("hidden");
 
     wysiwygContent.innerHTML = "";
@@ -158,12 +136,23 @@ document.addEventListener("DOMContentLoaded", () => {
       .config((ctx) => {
         ctx.set(rootCtx, wysiwygContent);
 
-        ctx.set(defaultValueCtx, editContent.value);
+        const content = document.querySelector("#content_text");
+        ctx.set(defaultValueCtx, content.value);
 
         const listener = ctx.get(listenerCtx);
         listener.updated(() => {
           // Use jQuery change method because dispatchEvent does not work expectedly.
           $("#content_text").change();
+
+          if (wysiwygTimer) {
+            window.clearTimeout(wysiwygTimer);
+          }
+
+          wysiwygTimer = window.setTimeout(() => {
+            if (wysiwygEditor) {
+              setContent(wysiwygEditor);
+            }
+          }, 300);
         });
 
         ctx.set(listItemBlockConfig.key, {
@@ -271,7 +260,60 @@ document.addEventListener("DOMContentLoaded", () => {
     jstWysiwyg = setupJsToolBar(wysiwygEditor);
   };
 
-  editTab?.parentNode.addEventListener("click", disablewysiwygContent);
-  previewTab?.parentNode.addEventListener("click", disablewysiwygContent);
-  wysiwygTab?.addEventListener("click", enablewysiwygContent);
+  setupDisableButton(disableWysiwygContent);
+  wysiwygTab?.addEventListener("click", enableWysiwygContent);
 });
+
+function initTabs() {
+  for (const tab of document.querySelectorAll('div.jstTabs a[class*="tab-"]')) {
+    tab.classList.remove("selected");
+  }
+
+  const jst = document.querySelector("div.jstTabs .tab-elements .jstElements");
+  jst.classList.add("hidden");
+}
+
+function initWysiwygTab() {
+  const previewTab = document.querySelector("div.jstTabs .tab-preview");
+  const wysiwygTab = document.querySelector(".tab-wysiwyg");
+  if (previewTab && wysiwygTab) {
+    previewTab
+      .closest("ul")
+      .insertBefore(wysiwygTab.parentNode, previewTab.parentNode.nextSibling);
+  } else {
+    wysiwygTab.style.display = "none";
+  }
+
+  return wysiwygTab;
+}
+
+function initContents() {
+  for (const content of document.querySelectorAll("div.jstEditor > *")) {
+    content.classList.add("hidden");
+  }
+}
+
+function initWysiwygContent() {
+  const previewContent = document.querySelector("#preview_content_text");
+  const wysiwygContent = document.querySelector("#wysiwyg_content_text");
+  if (previewContent && wysiwygContent) {
+    previewContent.parentNode.appendChild(wysiwygContent);
+  } else {
+    wysiwygContent.style.display = "none";
+  }
+
+  return wysiwygContent;
+}
+
+function setContent(editor) {
+  const content = document.querySelector("#content_text");
+  content.value = editor.action(getMarkdown());
+}
+
+function setupDisableButton(callback) {
+  for (const tab of document.querySelectorAll('div.jstTabs a[class*="tab-"]')) {
+    if (!tab.classList.contains("tab-wysiwyg")) {
+      tab.parentNode.addEventListener("click", callback);
+    }
+  }
+}
