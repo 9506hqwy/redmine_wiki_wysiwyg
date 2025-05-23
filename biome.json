@@ -6,7 +6,12 @@
         "useIgnoreFile": true
     },
     "files": {
-        "include": ["src/**/*.css", "src/**/*.js", "src/**/*.ts"]
+        "include": [
+            "src/**/*.css",
+            "src/**/*.js",
+            "src/**/*.ts",
+            "test/e2e/**/*.ts"
+        ]
     },
     "formatter": {
         "indentStyle": "space"

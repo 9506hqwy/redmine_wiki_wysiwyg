@@ -325,6 +325,7 @@ function insertInnerLinkWiki(e, ctx, state, dispatch) {
     to,
     markType.create({ href: wikiName, project: projectText }),
   );
+  tr.insertText(" ").removeMark(to, to + 1);
 
   if (dispatch) {
     dispatch(tr.scrollIntoView());

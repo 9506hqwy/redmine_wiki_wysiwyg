@@ -55,10 +55,11 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 - `CTRL+ALT+1`: Heading level 1.
 - `CTRL+ALT+2`: Heading level 2.
 - `CTRL+ALT+3`: Heading level 3.
+- `CTRL+ALT+7`: Order list.
 - `CTRL+ALT+8`: Bullet list.
 - `CTRL+ALT+c`: Code block.
 - `CTRL+ALT+x`: Strike through.
-- `CTRL+Shiftb`: Backquote.
+- `CTRL+Shift+b`: Backquote.
 - `Shift+Enter`: Hard break.
 - In list block
   - `TAB`: Indent level +1.

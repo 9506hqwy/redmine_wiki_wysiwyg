@@ -56,6 +56,7 @@ export const toggleExternalLinkCommand = $command(
         const to = from + uri.length;
         const href = toUrl(uri);
         tr.insertText(uri).addMark(from, to, markType.create({ href }));
+        tr.insertText(" ").removeMark(to, to + 1);
 
         if (dispatch) {
           dispatch(tr.scrollIntoView());

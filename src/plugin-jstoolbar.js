@@ -56,9 +56,11 @@ function setupButtonImg(button, editor, command) {
   button.addEventListener("click", (e) => {
     e.preventDefault();
     const uri = window.prompt("Image:");
-    editor.action(
-      callCommandAndFocusEditor(command.key, { src: uri, alt: uri }),
-    );
+    if (uri) {
+      editor.action(
+        callCommandAndFocusEditor(command.key, { src: uri, alt: uri }),
+      );
+    }
   });
   return button;
 }

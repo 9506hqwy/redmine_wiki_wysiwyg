@@ -248,7 +248,7 @@ function createTableRowMenu(row, column, getPos) {
 
   const addRowAfter = document.createElement("span");
   addRowAfter.classList.add("button");
-  addRowAfter.classList.add("add-row-before");
+  addRowAfter.classList.add("add-row-after");
   addRowAfter.innerText = "+";
   addRowAfter.addEventListener("click", (e) => {
     e.stopPropagation();

@@ -72,7 +72,6 @@ yarn-debug.log*
 package-lock.json
 
 # Ignore Playwright
-playwright-report/
 test-results/
 
 # Ignore artifacts

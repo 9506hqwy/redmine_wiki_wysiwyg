@@ -78,7 +78,10 @@ jobs:
     - name: Install essential
       run: |
         apt-get update
-        apt-get install -y build-essential
+        apt-get install -y \
+            build-essential \
+            curl \
+            unzip
 
     - name: Create database.yml (MySQL 5.7)
       if: matrix.db == 'mysql57'
@@ -144,7 +147,8 @@ jobs:
         ln -s ${PLUGIN_DIR} ${PLUGIN_NAME}
         cd ..
         bundle install --with test
-        bundle exec rake db:drop db:create db:migrate redmine:plugins:migrate
+        bundle exec rake db:drop
+        bundle exec rake db:create db:migrate redmine:plugins:migrate
         echo ja | bundle exec rake redmine:load_default_data
 
     - name: Check format
@@ -168,6 +172,50 @@ jobs:
 
         # skip db:test:prepare
         bundle exec rake test TEST=plugins/${PLUGIN_NAME}/test/**/*_test.rb
+
+    - name: Install fnm
+      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      run: |
+        curl -o- https://fnm.vercel.app/install | bash
+        echo "$HOME/.local/share/fnm" >> $GITHUB_PATH
+      env:
+        # https://github.com/microsoft/playwright/issues/27620
+        HOME: /root
+
+    - name: Install Node.js
+      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      run: |
+        eval $(fnm env --shell bash)
+        fnm install 22
+      env:
+        HOME: /root
+
+    - name: Install Playwright
+      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      run: |
+        eval $(fnm env --shell bash)
+        npm install
+        npx playwright install-deps
+        npx playwright install
+      env:
+        HOME: /root
+
+    - name: Run Playwright
+      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      run: |
+        eval $(fnm env --shell bash)
+
+        cd ${REDMINE_HOME}
+        bundle exec rails server --daemon --pid=./tmp/pids/server.pid
+        sleep 5
+
+        cd plugins/${PLUGIN_NAME}
+        npx playwright test --reporter=list
+
+        cd ${REDMINE_HOME}
+        kill $(cat ./tmp/pids/server.pid)
+      env:
+        HOME: /root
 
     - name: Generate coverage report
       if: matrix.db == 'sqlite3'

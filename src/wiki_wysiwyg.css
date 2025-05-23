@@ -211,7 +211,7 @@
     }
 
     &.add-row-after {
-      transform: translateX(-50%) translateY(50%);
+      transform: translateX(-50%) translateY(-50%);
     }
   }
 }
