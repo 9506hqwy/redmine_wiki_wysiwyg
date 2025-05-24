@@ -8,6 +8,11 @@ export default defineConfig({
   ],
   projects: [
     {
+      name: 'initialize',
+      testMatch: 'initialize*',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       name: 'chromium setup',
       testMatch: 'setup*',
       teardown: 'chromium teardown',
