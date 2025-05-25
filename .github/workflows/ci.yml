@@ -200,6 +200,14 @@ jobs:
       env:
         HOME: /root
 
+    - name: Build library
+      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      run: |
+        eval $(fnm env --shell bash)
+        npm run build
+      env:
+        HOME: /root
+
     - name: Run Playwright
       if: matrix.version != '3.4' && matrix.db == 'sqlite3'
       run: |
@@ -211,9 +219,9 @@ jobs:
 
         cd plugins/${PLUGIN_NAME}
         npx playwright test --reporter=list --project initialize
-        npx playwright test --reporter=list --project "chromium setup"
-        npx playwright test --reporter=list --project "firefox setup"
-        npx playwright test --reporter=list --project "webkit setup"
+        npx playwright test --reporter=list --project "chromium test"
+        npx playwright test --reporter=list --project "firefox test"
+        npx playwright test --reporter=list --project "webkit test"
 
         cd ${REDMINE_HOME}
         kill $(cat ./tmp/pids/server.pid)
