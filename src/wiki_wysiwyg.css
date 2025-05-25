@@ -1,5 +1,6 @@
 #wysiwyg_content_text {
   position: relative;
+  white-space: pre-wrap;
 
   .ProseMirror {
     padding: 0px;
