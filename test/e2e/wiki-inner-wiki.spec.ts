@@ -71,6 +71,16 @@ test("Inner wiki wiki", async ({ browser, browserName }) => {
   );
 });
 
+test("Inner wiki auto-complete", async ({ browser, browserName }) => {
+  // https://www.redmine.org/issues/33820
+  test.skip(
+    /^4\.(0|1)\./.test(process.env.REDMINE_VERSION || ""),
+    "Not support 4.1 or earlier",
+  );
+
+  // TODO:
+});
+
 async function innerWiki(browser, browserName, testCaseName, action, expected) {
   const page = await newPage(browser, browserName);
   await viewEditor(browserName, page);

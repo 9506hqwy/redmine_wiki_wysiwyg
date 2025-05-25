@@ -45,6 +45,12 @@ test("Menu order list", async ({ browser, browserName }) => {
 });
 
 test("Menu task list", async ({ browser, browserName }) => {
+  // https://www.redmine.org/issues/35742
+  test.skip(
+    /^4\./.test(process.env.REDMINE_VERSION || ""),
+    "Not support 4.2 or earlier",
+  );
+
   await jstoolbar(browser, browserName, "jstb_tl", "task", /\* \[ \] task/);
 });
 

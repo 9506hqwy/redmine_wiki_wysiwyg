@@ -45,6 +45,12 @@ test("Menu order list", async ({ browser, browserName }) => {
 });
 
 test("Menu task list", async ({ browser, browserName }) => {
+  // https://www.redmine.org/issues/35742
+  test.skip(
+    /^4\./.test(process.env.REDMINE_VERSION || ""),
+    "Not support 4.2 or earlier",
+  );
+
   await jstoolbar(browser, browserName, "jstb_tl", "task", /\* \[ \] task/);
 });
 
@@ -55,6 +61,12 @@ test("Menu back quote", async ({ browser, browserName }) => {
 // TODO: jstb_unbq
 
 test("Menu table block", async ({ browser, browserName }) => {
+  // https://www.redmine.org/issues/1575
+  test.skip(
+    /^4\.(0|1)\./.test(process.env.REDMINE_VERSION || ""),
+    "Not support 4.1 or earlier",
+  );
+
   await jstoolbar(
     browser,
     browserName,

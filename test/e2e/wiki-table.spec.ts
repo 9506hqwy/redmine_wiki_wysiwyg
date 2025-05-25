@@ -8,6 +8,12 @@ import {
   viewEditor,
 } from "./utils";
 
+// https://www.redmine.org/issues/1575
+test.skip(
+  /^4\.(0|1)\./.test(process.env.REDMINE_VERSION || ""),
+  "Not support 4.1 or earlier",
+);
+
 test("Table left align", async ({ browser, browserName }) => {
   await table(
     browser,

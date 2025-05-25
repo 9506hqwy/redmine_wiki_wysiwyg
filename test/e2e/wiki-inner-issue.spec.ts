@@ -8,6 +8,12 @@ import {
   viewEditor,
 } from "./utils";
 
+// https://www.redmine.org/issues/31989
+test.skip(
+  /^4\.0\./.test(process.env.REDMINE_VERSION || ""),
+  "Not support 4.0 or earlier",
+);
+
 test("Inner link issue enter", async ({ browser, browserName }) => {
   const page = await newPage(browser, browserName);
   await viewEditor(browserName, page);

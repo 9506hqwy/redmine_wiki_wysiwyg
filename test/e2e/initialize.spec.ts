@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { screenshot } from "./utils";
 
 test("initialize", async ({ page, browserName }) => {
@@ -14,5 +14,25 @@ test("initialize", async ({ page, browserName }) => {
   await page.locator("input#new_password_confirmation").fill("redmineadmin");
   await page.locator('input[name="commit"]').click();
 
+  await expect(page.locator("div#flash_notice")).toBeVisible();
+
   await screenshot(page, `initialize_${browserName}`);
+
+  await page.goto("http://localhost:3000/settings");
+
+  if (/^4\./.test(process.env.REDMINE_VERSION || "")) {
+    await page
+      .locator("select#settings_text_formatting")
+      .selectOption("markdown");
+  } else {
+    await page
+      .locator("select#settings_text_formatting")
+      .selectOption("common_mark");
+  }
+
+  await page.locator('div#tab-content-general input[name="commit"]').click();
+
+  await expect(page.locator("div#flash_notice")).toBeVisible();
+
+  await screenshot(page, `configuration_${browserName}`);
 });
