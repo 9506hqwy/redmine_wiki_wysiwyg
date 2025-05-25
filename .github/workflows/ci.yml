@@ -211,10 +211,9 @@ jobs:
 
         cd plugins/${PLUGIN_NAME}
         npx playwright test --reporter=list --project initialize
-        npx playwright test --reporter=list --project \
-            "chromium test" \
-            "firefox test" \
-            "webkit test"
+        npx playwright test --reporter=list --project "chromium setup"
+        npx playwright test --reporter=list --project "firefox setup"
+        npx playwright test --reporter=list --project "webkit setup"
 
         cd ${REDMINE_HOME}
         kill $(cat ./tmp/pids/server.pid)
