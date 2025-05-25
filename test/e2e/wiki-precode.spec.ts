@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   editStart,
   newPage,
@@ -18,6 +18,12 @@ async function predode(browser, browserName, data, expected) {
   const editor = await editStart(page);
 
   await editor.press("Control+Alt+c");
+
+  await expect(page.locator("div.cm-content")).toBeVisible();
+
+  // sleep(300ms) until event handler completing.
+  await sleep(300);
+
   await editor.pressSequentially(data);
 
   const codeEditor = page.locator("div.cm-editor");
@@ -30,8 +36,10 @@ async function predode(browser, browserName, data, expected) {
 
   const lang = page.locator("ul.language-list li").first();
   lang.click();
-  // sleep(100ms) until event handler completing.
-  await sleep(100);
+
+  await expect(
+    page.locator('div.cm-content[data-language="cpp"]'),
+  ).toBeVisible();
 
   await screenshot(page, `wiki_precode_update_view_c_${browserName}`);
 

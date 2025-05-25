@@ -1,9 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import {
   editStart,
   newPage,
   screenshot,
-  sleep,
   toHaveMarkdown,
   viewEditor,
 } from "./utils";

@@ -1,9 +1,8 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   editStart,
   newPage,
   screenshot,
-  sleep,
   toHaveMarkdown,
   viewEditor,
 } from "./utils";
@@ -183,8 +182,8 @@ async function table(browser, browserName, data, action, expected) {
 
   const menuButton = page.locator("li.tab-wysiwyg-elements button.jstb_table");
   await menuButton.click();
-  // sleep(100ms) until event handler completing.
-  await sleep(100);
+
+  await expect(page.locator("div#wysiwyg_content_text table")).toBeVisible();
 
   await editor.pressSequentially(data);
 

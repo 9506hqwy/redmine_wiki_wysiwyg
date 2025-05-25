@@ -29,9 +29,6 @@ export const toHaveMarkdown = async (page, expected) => {
   const mdTab = page.locator("a.tab-edit");
   await mdTab.click();
 
-  // sleep(100ms) until event handler completing.
-  await sleep(100);
-
   const md = page.locator("#content_text");
   await expect(md).toBeVisible();
   await expect(md).toHaveValue(expected);

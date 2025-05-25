@@ -1,9 +1,8 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   editStart,
   newPage,
   screenshot,
-  sleep,
   toHaveMarkdown,
   viewEditor,
 } from "./utils";
@@ -30,8 +29,8 @@ async function extlink(browser, browserName, data, updated, expected) {
     "li.tab-wysiwyg-elements button.jstb_extlink",
   );
   await menuButton.click();
-  // sleep(100ms) until event handler completing.
-  await sleep(100);
+
+  await expect(page.locator("div#wysiwyg_content_text a")).toBeVisible();
 
   page.on("dialog", async (dialog) => {
     await dialog.accept(updated);
