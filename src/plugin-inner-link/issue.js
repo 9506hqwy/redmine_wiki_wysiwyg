@@ -218,11 +218,7 @@ export const innerLinkIssueSlashPlugin = (ctx) => {
   const provider = new SlashProvider({
     content,
     shouldShow(view, prevState) {
-      if (!window.rm) {
-        return false;
-      }
-
-      if (!rm.AutoComplete.dataSources.issues) {
+      if (!getAutoCompleteUrl()) {
         return false;
       }
 
@@ -239,7 +235,7 @@ export const innerLinkIssueSlashPlugin = (ctx) => {
   });
 
   provider.onShow = () => {
-    const baseUrl = rm.AutoComplete.dataSources.issues;
+    const baseUrl = getAutoCompleteUrl();
     const option = {
       method: "GET",
       cache: "no-cache",
@@ -292,3 +288,16 @@ export const innerLinkIssueSlashPlugin = (ctx) => {
     opened: false,
   };
 };
+
+function getAutoCompleteUrl() {
+  if (window.rm && rm.AutoComplete.dataSources.issues) {
+    return rm.AutoComplete.dataSources.issues;
+  }
+
+  const textarea = document.querySelector("textarea#content_text");
+  if (textarea?.dataset.issuesUrl) {
+    return textarea.dataset.issuesUrl;
+  }
+
+  return null;
+}
