@@ -3,7 +3,6 @@ import {
   editStart,
   newPage,
   screenshot,
-  sleep,
   toHaveMarkdown,
   viewEditor,
 } from "./utils";
@@ -17,14 +16,10 @@ async function predode(browser, browserName, data, expected) {
   await viewEditor(browserName, page);
   const editor = await editStart(page);
 
+  await editor.pressSequentially(data);
   await editor.press("Control+Alt+c");
 
   await expect(page.locator("div.cm-content")).toBeVisible();
-
-  // sleep(300ms) until event handler completing.
-  await sleep(300);
-
-  await editor.pressSequentially(data);
 
   const codeEditor = page.locator("div.cm-editor");
   await codeEditor.focus();
