@@ -2,8 +2,6 @@
 
 This plugin provides a WYSIWYG-style editor for wiki pages.
 
-**Now this plugins is in development phase yet.**
-
 ## Features
 
 - Edit wiki using rich text editor.
