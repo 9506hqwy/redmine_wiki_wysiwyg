@@ -364,7 +364,7 @@ function setupAutoComplete(element) {
     return;
   }
 
-  const baseUrl = rm.AutoComplete.dataSources.wiki_pages;
+  const baseUrl = getAutoCompleteUrl();
   let timer = null;
 
   element.addEventListener("keyup", (e) => {
@@ -413,4 +413,19 @@ function clearWikiInput() {
   const list = document.querySelector("#wysisyg-inner-link-wiki-data");
   list.innerText = "";
   return list;
+}
+
+function getAutoCompleteUrl() {
+  if (window.rm && rm.AutoComplete.dataSources.wiki_pages) {
+    return rm.AutoComplete.dataSources.wiki_pages;
+  }
+
+  if (window.rm && rm.AutoComplete.dataSources) {
+    const dataSources = JSON.parse(rm.AutoComplete.dataSources);
+    if (dataSources.wiki_pages) {
+      return dataSources.wiki_pages;
+    }
+  }
+
+  return null;
 }

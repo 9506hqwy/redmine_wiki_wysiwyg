@@ -294,6 +294,13 @@ function getAutoCompleteUrl() {
     return rm.AutoComplete.dataSources.issues;
   }
 
+  if (window.rm && rm.AutoComplete.dataSources) {
+    const dataSources = JSON.parse(rm.AutoComplete.dataSources);
+    if (dataSources.issues) {
+      return dataSources.issues;
+    }
+  }
+
   const textarea = document.querySelector("textarea#content_text");
   if (textarea?.dataset.issuesUrl) {
     return textarea.dataset.issuesUrl;
