@@ -10,6 +10,12 @@
         },
         "editor.defaultFormatter": "biomejs.biome"
     },
+    "[markdown]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.markdownlint": "explicit"
+        },
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+    },
     "[typescript]": {
         "editor.codeActionsOnSave": {
             "source.fixAll.biome": "explicit",

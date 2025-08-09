@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     tags-ignore: [ '**' ]
+  pull_request:
 
 jobs:
   build:
@@ -174,7 +175,7 @@ jobs:
         bundle exec rake test TEST=plugins/${PLUGIN_NAME}/test/**/*_test.rb
 
     - name: Install fnm
-      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      if: matrix.db == 'sqlite3'
       run: |
         curl -o- https://fnm.vercel.app/install | bash
         echo "$HOME/.local/share/fnm" >> $GITHUB_PATH
@@ -183,7 +184,7 @@ jobs:
         HOME: /root
 
     - name: Install Node.js
-      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      if: matrix.db == 'sqlite3'
       run: |
         eval $(fnm env --shell bash)
         fnm install 22
@@ -191,7 +192,7 @@ jobs:
         HOME: /root
 
     - name: Install Playwright
-      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      if: matrix.db == 'sqlite3'
       run: |
         eval $(fnm env --shell bash)
         npm install
@@ -201,7 +202,7 @@ jobs:
         HOME: /root
 
     - name: Build library
-      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      if: matrix.db == 'sqlite3'
       run: |
         eval $(fnm env --shell bash)
         npm run build
@@ -209,11 +210,14 @@ jobs:
         HOME: /root
 
     - name: Run Playwright
-      if: matrix.version != '3.4' && matrix.db == 'sqlite3'
+      if: matrix.db == 'sqlite3'
       run: |
         eval $(fnm env --shell bash)
 
         cd ${REDMINE_HOME}
+        bundle exec rake db:drop
+        bundle exec rake db:create db:migrate redmine:plugins:migrate
+        echo ja | bundle exec rake redmine:load_default_data
         bundle exec rails server --daemon --pid=./tmp/pids/server.pid
         sleep 5
 

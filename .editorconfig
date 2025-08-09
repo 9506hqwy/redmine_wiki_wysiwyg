@@ -3,21 +3,23 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
+indent_size = 4
+indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.css]
+[*.md]
 indent_size = 2
-indent_style = space
+trim_trailing_whitespace = false
+
+[*.{ini,toml}]
+indent_size = 2
 
 [*.{js,ts}]
 indent_size = 2
-indent_style = space
-
-[*.json]
-indent_size = 4
-indent_style = space
 
 [*.rb]
 indent_size = 2
-indent_style = space
+
+[*.{yaml,yml}]
+indent_size = 2

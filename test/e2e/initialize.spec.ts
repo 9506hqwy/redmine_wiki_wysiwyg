@@ -3,7 +3,10 @@ import { screenshot } from "./utils";
 
 test("initialize", async ({ page, browserName }) => {
   await page.goto("http://localhost:3000/");
+  await expect(page.locator("a.login")).toBeVisible();
+
   await page.locator("a.login").click();
+  await expect(page.locator("input#login-submit")).toBeVisible();
 
   await page.locator("input#username").fill("admin");
   await page.locator("input#password").fill("admin");
