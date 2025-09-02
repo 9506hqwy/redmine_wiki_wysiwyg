@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Setup redmine plugin
-PLUGIN_DIR=$(pwd)
+PLUGIN_DIR="$(pwd)"
 
 pushd "${REDMINE_HOME}"
 

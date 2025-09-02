@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Install dependencies
-sudo apt-get update
-sudo apt-get install -y imagemagick zstd
+sudo apt-get update -y
+sudo apt-get install -y imagemagick shellcheck zstd
 
 # Configuration PATH
 mkdir -p ~/.local/bin

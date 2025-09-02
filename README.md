@@ -90,7 +90,7 @@ This plugin provides a WYSIWYG-style editor for wiki pages.
 * Database
   * SQLite
   * MySQL 5.7 or 8.0
-  * PostgreSQL 12
+  * PostgreSQL 14
 
 ## References
 
