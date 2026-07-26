@@ -76,7 +76,7 @@ export const innerLinkUserMark = $remark(
 
 // Schema for innerLinkUser AST.
 // https://github.com/Milkdown/milkdown/blob/v7.10.1/packages/transformer/src/utility/types.ts#L47
-export const innerLinkUserSchema = $nodeSchema("innerLinkUser", (ctx) => ({
+export const innerLinkUserSchema = $nodeSchema("innerLinkUser", (_ctx) => ({
   group: "inline",
   inline: true,
   atom: true,
@@ -119,7 +119,7 @@ export const innerLinkUserSchema = $nodeSchema("innerLinkUser", (ctx) => ({
 }));
 
 // View innerLinkUser AST.
-export const innerLinkUserView = $view(innerLinkUserSchema.node, (ctx) => {
+export const innerLinkUserView = $view(innerLinkUserSchema.node, (_ctx) => {
   return (node, view, getPos) => {
     const link = document.createElement("a");
     link.classList.add("user");
@@ -256,7 +256,7 @@ export const innerLinkUserSlashPlugin = (ctx) => {
 
   const provider = new SlashProvider({
     content,
-    shouldShow(view, prevState) {
+    shouldShow(view, _prevState) {
       if (!window.rm) {
         return false;
       }
@@ -280,7 +280,7 @@ export const innerLinkUserSlashPlugin = (ctx) => {
   provider.onShow = () => fetchUser(prompt, onReceiveList);
 
   return {
-    view: (view) => ({
+    view: (_view) => ({
       update: (updatedView, prevState) => {
         provider.update(updatedView, prevState);
       },
@@ -309,7 +309,7 @@ export const innerLinkUserSlashPlugin = (ctx) => {
           return true;
         }
 
-        const itemIdx = Number.parseInt(cur.dataset.index);
+        const itemIdx = Number.parseInt(cur.dataset.index, 10);
         let nextIdx = event.keyCode === 38 ? itemIdx - 1 : itemIdx + 1;
         if (nextIdx < 0) {
           nextIdx = list.childNodes.length - 1;

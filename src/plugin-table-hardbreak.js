@@ -11,7 +11,7 @@ import { visit } from "unist-util-visit";
 // https://github.com/syntax-tree/mdast-util-to-markdown/blob/2.1.2/lib/handle/break.js#L19
 
 // Extended toMarkdown method for `hardbreak` in table.
-export const tableHardbreakHandler = (node, _, state, info) => {
+export const tableHardbreakHandler = (_node, _, state, info) => {
   const exit = state.enter("tableHardbreak");
   const tracker = state.createTracker(info);
 

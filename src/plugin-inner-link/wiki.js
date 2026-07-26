@@ -91,7 +91,7 @@ export const innerLinkWikiMark = $remark(
 
 // Schema for innerLinkWiki AST.
 // https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/transformer/src/utility/types.ts#L57
-export const innerLinkWikiSchema = $markSchema("innerLinkWiki", (ctx) => ({
+export const innerLinkWikiSchema = $markSchema("innerLinkWiki", (_ctx) => ({
   attrs: {
     href: {},
     project: {
@@ -135,7 +135,7 @@ export const innerLinkWikiSchema = $markSchema("innerLinkWiki", (ctx) => ({
 
 // View innerLinkWiki AST.
 export const innerLinkWikiView = $view(innerLinkWikiSchema.mark, (ctx) => {
-  return (mark, view, inline) => {
+  return (mark, view, _inline) => {
     const link = document.createElement("a");
     link.href = mark.attrs.href;
     link.dataset.project = mark.attrs.project;
@@ -155,7 +155,7 @@ export const innerLinkWikiView = $view(innerLinkWikiSchema.mark, (ctx) => {
 
       const dialog = setupDialog(
         (e) => updateInnerLinkWiki(e, ctx, state, dispatch, node, curMark),
-        (d) => {
+        (_d) => {
           document.getElementById("wysisyg-inner-link-project").value =
             curMark.attrs.project;
           document.getElementById("wysisyg-inner-link-wiki").value =

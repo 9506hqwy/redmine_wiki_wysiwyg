@@ -70,8 +70,8 @@ export const tableHeaderExSchema = tableHeaderSchema.extendSchema((prev) => {
 });
 
 // View table header AST.
-export const tableHeaderView = $view(tableHeaderSchema.node, (ctx) => {
-  return (node, view, getPos, decorations, innerDecorations) => {
+export const tableHeaderView = $view(tableHeaderSchema.node, (_ctx) => {
+  return (node, _view, getPos, _decorations, _innerDecorations) => {
     const header = document.createElement("th");
     header.style = `text-align: ${node.attrs.alignment}`;
 
@@ -89,8 +89,8 @@ export const tableHeaderView = $view(tableHeaderSchema.node, (ctx) => {
 });
 
 // View table cell AST.
-export const tableCellView = $view(tableCellSchema.node, (ctx) => {
-  return (node, view, getPos, decorations, innerDecorations) => {
+export const tableCellView = $view(tableCellSchema.node, (_ctx) => {
+  return (node, _view, getPos, _decorations, _innerDecorations) => {
     const cell = document.createElement("td");
     cell.style = `text-align: ${node.attrs.alignment}`;
 
@@ -204,7 +204,7 @@ function createTableRowMenu(row, column, getPos) {
   delCol.classList.add("button");
   delCol.classList.add("del-col");
   delCol.innerText = "-";
-  delCol.addEventListener("click", (e) => {
+  delCol.addEventListener("click", (_e) => {
     wysiwygEditor.action(
       callCommand(selectColCommand.key, { index: column, pos: getPos() }),
     );
@@ -239,7 +239,7 @@ function createTableRowMenu(row, column, getPos) {
   delRow.classList.add("button");
   delRow.classList.add("del-row");
   delRow.innerText = "-";
-  delRow.addEventListener("click", (e) => {
+  delRow.addEventListener("click", (_e) => {
     wysiwygEditor.action(
       callCommand(selectRowCommand.key, { index: row, pos: getPos() }),
     );

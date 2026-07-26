@@ -89,7 +89,7 @@ export const innerLinkOtherMark = $remark(
 
 // Schema for innerLinkOther AST.
 // https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/transformer/src/utility/types.ts#L57
-export const innerLinkOtherSchema = $nodeSchema("innerLinkOther", (ctx) => ({
+export const innerLinkOtherSchema = $nodeSchema("innerLinkOther", (_ctx) => ({
   content: "text*",
   group: "inline",
   inline: true,
@@ -146,7 +146,7 @@ export const innerLinkOtherSchema = $nodeSchema("innerLinkOther", (ctx) => ({
 }));
 
 // View innerLinkOther AST.
-export const innerLinkOtherView = $view(innerLinkOtherSchema.node, (ctx) => {
+export const innerLinkOtherView = $view(innerLinkOtherSchema.node, (_ctx) => {
   return (node, view, getPos) => {
     const link = document.createElement("a");
     link.classList.add(node.attrs.kind);

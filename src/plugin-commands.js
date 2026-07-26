@@ -11,7 +11,7 @@ import { $command, callCommand } from "@milkdown/utils";
 export const toggleInlineCodeExCommand = $command(
   "ToggleInlineCodeEx",
   (ctx) => () => (state, dispatch) => {
-    const { tr, selection } = state;
+    const { selection } = state;
 
     if (!selection.empty) {
       return callCommand(toggleInlineCodeCommand.key)(ctx);
@@ -23,7 +23,7 @@ export const toggleInlineCodeExCommand = $command(
 
 export const unwrapInBlockquoteCommand = $command(
   "UnwrapInBlockquote",
-  (ctx) => () => (state, dispatch) => {
+  (_ctx) => () => (state, dispatch) => {
     const tr = state.tr;
 
     const { $from, $to } = tr.selection;

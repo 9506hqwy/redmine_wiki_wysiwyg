@@ -78,7 +78,7 @@ export const innerLinkIssueMark = $remark(
 
 // Schema for innerLinkIssue AST.
 // https://github.com/Milkdown/milkdown/blob/v7.8.0/packages/transformer/src/utility/types.ts#L57
-export const innerLinkIssueSchema = $markSchema("innerLinkIssue", (ctx) => ({
+export const innerLinkIssueSchema = $markSchema("innerLinkIssue", (_ctx) => ({
   // Set high priority than text.
   parseDOM: [
     {
@@ -88,7 +88,7 @@ export const innerLinkIssueSchema = $markSchema("innerLinkIssue", (ctx) => ({
   ],
   // View innerLinkIssue AST.
   // AST --> DOM
-  toDOM: (mark) => ["a", { "data-innerlink_type": "issue" }],
+  toDOM: (_mark) => ["a", { "data-innerlink_type": "issue" }],
   // Use innerLinkIssueMark remark.
   parseMarkdown: {
     match: (node) => node.type === "innerLinkIssue",
@@ -103,7 +103,7 @@ export const innerLinkIssueSchema = $markSchema("innerLinkIssue", (ctx) => ({
   // AST --(toMarkdown)--> markdown text.
   toMarkdown: {
     match: (mark) => mark.type.name === "innerLinkIssue",
-    runner: (state, mark, node) => {
+    runner: (state, mark, _node) => {
       state.withMark(mark, "innerLinkIssue");
     },
   },
@@ -113,7 +113,7 @@ export const innerLinkIssueSchema = $markSchema("innerLinkIssue", (ctx) => ({
 export const innerLinkIssueRule = $inputRule(
   (ctx) =>
     new InputRule(/(^|\s)(#\d+)(\s)$/, (state, match, start, end) => {
-      const [matched, header, issue_id, tailer] = match;
+      const [matched, header, _issue_id, tailer] = match;
       if (matched) {
         const { tr } = state;
         tr.addMark(
@@ -217,7 +217,7 @@ export const innerLinkIssueSlashPlugin = (ctx) => {
 
   const provider = new SlashProvider({
     content,
-    shouldShow(view, prevState) {
+    shouldShow(view, _prevState) {
       if (!getAutoCompleteUrl()) {
         return false;
       }
@@ -244,7 +244,7 @@ export const innerLinkIssueSlashPlugin = (ctx) => {
   };
 
   return {
-    view: (view) => ({
+    view: (_view) => ({
       update: (updatedView, prevState) => {
         provider.update(updatedView, prevState);
       },
@@ -273,7 +273,7 @@ export const innerLinkIssueSlashPlugin = (ctx) => {
           return true;
         }
 
-        const itemIdx = Number.parseInt(cur.dataset.index);
+        const itemIdx = Number.parseInt(cur.dataset.index, 10);
         let nextIdx = event.keyCode === 38 ? itemIdx - 1 : itemIdx + 1;
         if (nextIdx < 0) {
           nextIdx = list.childNodes.length - 1;

@@ -2,8 +2,8 @@ import { imageSchema } from "@milkdown/preset-commonmark";
 import { $view } from "@milkdown/utils";
 
 // View image AST.
-export const imageView = $view(imageSchema.node, (ctx) => {
-  return (node, view, getPos, decorations, innerDecorations) => {
+export const imageView = $view(imageSchema.node, (_ctx) => {
+  return (node, _view, _getPos, _decorations, _innerDecorations) => {
     const image = document.createElement("img");
     const url = toUrl(node.attrs.src);
 

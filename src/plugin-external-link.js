@@ -4,7 +4,7 @@ import { $command, $view } from "@milkdown/utils";
 
 // View link AST.
 export const externalLinkView = $view(linkSchema.mark, (ctx) => {
-  return (mark, view, inline) => {
+  return (mark, view, _inline) => {
     const link = document.createElement("a");
     link.href = mark.attrs.href;
     link.title = mark.attrs.title;
