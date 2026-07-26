@@ -9,9 +9,9 @@
         "lint": "biome lint --write"
     },
     "dependencies": {
-        "@codemirror/language-data": "^6.5.1",
-        "@milkdown/kit": "^7.9.0",
-        "codemirror": "^6.0.1"
+        "@codemirror/language-data": "^6.5.2",
+        "@milkdown/kit": "^7.21.3",
+        "codemirror": "^6.0.2"
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.5",
